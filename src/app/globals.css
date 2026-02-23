@@ -1,0 +1,190 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+@layer base {
+  body {
+    @apply bg-white text-black antialiased;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer components {
+
+  /* Dot Grid Background */
+  .bg-grid-dots {
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
+    mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  }
+
+  /* Massive Typography */
+  .text-massive {
+    font-size: clamp(3rem, 11vw, 11rem);
+    line-height: 0.85;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+  }
+
+  /* Reveal Animation Classes */
+  .reveal {
+    opacity: 0;
+    transform: translateY(100px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Sticky Cards */
+  .sticky-card {
+    position: sticky;
+    top: 100px;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  /* Custom Cursor */
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #000;
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, background-color 0.3s;
+  }
+
+  .cursor-outline {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+  }
+
+  body.hovering .cursor-dot {
+    width: 12px;
+    height: 12px;
+    background-color: #2563eb;
+  }
+
+  body.hovering .cursor-outline {
+    width: 60px;
+    height: 60px;
+    border-color: rgba(37, 99, 235, 0.3);
+    background-color: rgba(37, 99, 235, 0.05);
+  }
+
+  .interactive {
+    cursor: none !important;
+  }
+}
+
+
+@layer utilities {
+  /* Responsive Text Utilities */
+  .text-responsive-xs { font-size: clamp(0.75rem, 2vw, 0.875rem); }
+  .text-responsive-sm { font-size: clamp(0.875rem, 2.5vw, 1rem); }
+  .text-responsive-base { font-size: clamp(1rem, 3vw, 1.125rem); }
+  .text-responsive-lg { font-size: clamp(1.125rem, 3.5vw, 1.25rem); }
+  .text-responsive-xl { font-size: clamp(1.25rem, 4vw, 1.5rem); }
+  .text-responsive-2xl { font-size: clamp(1.5rem, 5vw, 2rem); }
+  .text-responsive-3xl { font-size: clamp(2rem, 6vw, 3rem); }
+  .text-responsive-4xl { font-size: clamp(2.5rem, 7vw, 4rem); }
+  .text-responsive-5xl { font-size: clamp(3rem, 8vw, 5rem); }
+  
+  /* Responsive Spacing */
+  .p-responsive { padding: clamp(1rem, 4vw, 2rem); }
+  .px-responsive { padding-left: clamp(1rem, 4vw, 2rem); padding-right: clamp(1rem, 4vw, 2rem); }
+  .py-responsive { padding-top: clamp(1rem, 4vw, 2rem); padding-bottom: clamp(1rem, 4vw, 2rem); }
+  .m-responsive { margin: clamp(1rem, 4vw, 2rem); }
+  .mx-responsive { margin-left: clamp(1rem, 4vw, 2rem); margin-right: clamp(1rem, 4vw, 2rem); }
+  .my-responsive { margin-top: clamp(1rem, 4vw, 2rem); margin-bottom: clamp(1rem, 4vw, 2rem); }
+  
+  /* Safe Area for Mobile */
+  .safe-top { padding-top: env(safe-area-inset-top); }
+  .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+  .safe-left { padding-left: env(safe-area-inset-left); }
+  .safe-right { padding-right: env(safe-area-inset-right); }
+  
+  /* Touch Targets */
+  .touch-target { min-height: 44px; min-width: 44px; }
+  
+  /* Responsive Containers */
+  .container-responsive {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(1rem, 4vw, 2rem);
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #fff;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 4px;
+  }
+  
+  /* Prevent horizontal scroll */
+  .no-scrollbar-x {
+    overflow-x: hidden;
+  }
+  
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
