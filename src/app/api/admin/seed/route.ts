@@ -6,7 +6,7 @@ export async function POST() {
         // Add sample events
         await events.create(generateId('evt'), {
             title: 'Grand Launch Event',
-            description: 'Join us for the grand launch of AI D Mart platform',
+            description: 'Join us for the grand launch of our platform',
             date: 'Dec 25, 2024',
             location: 'Bangalore Convention Center',
             image: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&q=80&w=400',
@@ -52,7 +52,7 @@ export async function POST() {
         // Add sample jobs
         await jobs.create(generateId('job'), {
             title: 'Area Sales Manager',
-            company: 'AI D Mart',
+            company: 'Platform',
             description: 'Manage sales operations in assigned territory',
             type: 'Full Time',
             salary: '₹25k - ₹40k',

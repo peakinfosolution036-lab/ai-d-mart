@@ -49,7 +49,7 @@ const INITIAL_PRODUCTS: ProductItem[] = [
 
 const INITIAL_JOBS: JobItem[] = [
     { id: '1', title: 'Area Sales Manager', company: 'Devaramane Industries', type: 'Full Time', salary: '₹25k - ₹40k' },
-    { id: '2', title: 'Delivery Partner', company: 'AI D Mart Logistics', type: 'Part Time', salary: '₹15k - ₹20k' },
+    { id: '2', title: 'Delivery Partner', company: 'Logistics', type: 'Part Time', salary: '₹15k - ₹20k' },
 ];
 
 const INITIAL_OFFERS: OfferItem[] = [

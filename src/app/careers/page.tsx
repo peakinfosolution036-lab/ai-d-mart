@@ -41,7 +41,7 @@ const roles = [
         icon: Share2,
         title: 'Social Media Marketer',
         type: 'Full-time / Contract',
-        desc: 'Create and manage campaigns across Instagram, Facebook, YouTube, and WhatsApp to grow the AI D Mart community.',
+        desc: 'Create and manage campaigns across Instagram, Facebook, YouTube, and WhatsApp to grow the community.',
         skills: ['Content Creation', 'Meta Ads', 'Reels & Shorts', 'Analytics'],
         color: 'from-pink-400 to-purple-500',
         bg: 'from-pink-500/10 to-purple-500/10',
@@ -138,14 +138,14 @@ export default function CareersPage() {
                                 Marketing
                             </span>
                             <span className="block text-3xl sm:text-4xl md:text-5xl font-light opacity-70 mt-2">
-                                Jobs at AI D Mart
+                                Careers
                             </span>
                         </h1>
                     </Reveal>
 
                     <Reveal delay={200}>
                         <p className="text-lg sm:text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
-                            A digital marketer's primary goal is to create effective long-term campaigns and short-term advertisements
+                            A digital marketer&apos;s primary goal is to create effective long-term campaigns and short-term advertisements
                             that power a business forward. Be part of a platform connecting rural India to the digital economy.
                         </p>
                     </Reveal>
@@ -297,7 +297,7 @@ export default function CareersPage() {
 
                 <div className="max-w-7xl mx-auto relative z-10">
                     <Reveal className="text-center mb-16">
-                        <span className="text-amber-600 font-semibold text-lg mb-4 block">Why AI D Mart</span>
+                        <span className="text-amber-600 font-semibold text-lg mb-4 block">Why Join Us</span>
                         <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">
                             More Than a <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Job</span>
                         </h2>
@@ -382,7 +382,7 @@ export default function CareersPage() {
                             Ready to <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600">Start?</span>
                         </h2>
                         <p className="text-xl text-gray-600 mb-10">
-                            Register today, get your Permanent ID, and start earning through AI D Mart's digital marketing team.
+                            Register today, get your Permanent ID, and start earning through our digital marketing team.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link
@@ -405,7 +405,7 @@ export default function CareersPage() {
 
             {/* Footer mini */}
             <footer className="py-10 px-6 bg-black border-t border-white/5 text-center text-gray-500 text-sm">
-                <p>© 2026 Devaramane Events and Industries — AI D Mart</p>
+                <p>© {new Date().getFullYear()} Devaramane Events and Industries</p>
                 <div className="flex justify-center gap-6 mt-3">
                     <Link href="/" className="hover:text-amber-400 transition-colors">Home</Link>
                     <Link href="/terms" className="hover:text-amber-400 transition-colors">Terms &amp; Conditions</Link>

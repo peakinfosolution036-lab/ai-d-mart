@@ -12,12 +12,12 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 })
 
 export const metadata: Metadata = {
-    title: 'AI D Mart - Digital India Platform',
+    title: 'Digital India Platform',
     description: 'Connecting rural India to the future economy. Zero investment. Maximum growth.',
-    keywords: ['AI D Mart', 'Digital India', 'FinTech', 'E-Commerce', 'Financial Inclusion'],
+    keywords: ['Digital India', 'FinTech', 'E-Commerce', 'Financial Inclusion'],
     authors: [{ name: 'Devaramane Events and Industries' }],
     openGraph: {
-        title: 'AI D Mart - Digital India Platform',
+        title: 'Digital India Platform',
         description: 'Connecting rural India to the future economy',
         type: 'website',
     },

@@ -114,6 +114,38 @@ export default function AboutPage() {
                 </div>
             </section>
 
+            {/* Vision and Mission Section */}
+            <section className="py-24 bg-white relative overflow-hidden">
+                <div className="max-w-[1400px] mx-auto px-6 md:px-20 text-center">
+                    <h2 className="text-sm font-bold text-[#00703C] uppercase tracking-[0.3em] mb-4">Our Purpose</h2>
+                    <h3 className="text-4xl md:text-6xl font-black text-[#004D2C] leading-tight tracking-tighter mb-16">
+                        VISION <span className="text-[#00703C]/50 italic">&</span> MISSION
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12 text-left">
+                        <div className="bg-[#F0FDF4] p-10 rounded-[2rem] border border-green-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+                            <div className="w-16 h-16 bg-[#00703C] text-white rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-green-500/30">
+                                <Target size={32} />
+                            </div>
+                            <h4 className="text-3xl font-black text-[#004D2C] mb-4">Our Vision</h4>
+                            <p className="text-lg text-gray-700 leading-relaxed">
+                                To be the world's most trusted and innovative event management company, transforming ordinary moments into extraordinary, unforgettable experiences that resonate globally. We envision a future where every celebration, no matter how big or small, is executed with flawless precision and boundless creativity.
+                            </p>
+                        </div>
+
+                        <div className="bg-[#F0FDF4] p-10 rounded-[2rem] border border-green-100 shadow-xl hover:shadow-2xl transition-all duration-300">
+                            <div className="w-16 h-16 bg-[#FFD700] text-[#004D2C] rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-yellow-500/30">
+                                <Zap size={32} />
+                            </div>
+                            <h4 className="text-3xl font-black text-[#004D2C] mb-4">Our Mission</h4>
+                            <p className="text-lg text-gray-700 leading-relaxed">
+                                Our mission is to seamlessly weave dreams, emotions, relations, and responsibilities into reality. We strive to provide elite quality services, combining traditional values with modern aesthetics, ensuring that our clients can entrust their biggest milestones to us with complete peace of mind.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Core Values Section */}
             <section className="py-32 bg-[#004D2C] text-white relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-[#00703C] rounded-full blur-[150px] opacity-40 -z-10"></div>

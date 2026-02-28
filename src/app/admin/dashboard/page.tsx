@@ -213,10 +213,10 @@ export default function AdminDashboard() {
 
     // Admin's own business state (Minimal)
     const [adminBusiness, setAdminBusiness] = useState({
-        name: 'AI D Mart HQ',
+        name: 'Headquarters',
         logo: '',
         contactNumber: '+91 9876543210',
-        email: 'admin@aidmart.com',
+        email: 'admin@platform.com',
         address: '123 Tech Park, Bangalore, India',
         about: 'Premium E-commerce and Event Management Platform.',
         bankInfo: {
@@ -1998,7 +1998,7 @@ export default function AdminDashboard() {
 
     const renderSettings = () => {
         const settings = platformSettings || {
-            appName: 'AI D Mart',
+            appName: 'Platform',
             appVersion: '1.0.0',
             maintenanceMode: false,
             commissionRate: 10,
@@ -2007,7 +2007,7 @@ export default function AdminDashboard() {
             maxWithdrawal: 50000,
             featuredListingPrice: 499,
             adPricePerDay: 99,
-            supportEmail: 'support@aidmart.in',
+            supportEmail: 'support@platform.com',
             paymentGateway: { razorpay: true, paytm: false, upi: true },
             features: { jobs: true, events: true, shopping: true, wallet: true }
         };
@@ -2692,7 +2692,7 @@ export default function AdminDashboard() {
                                             </div>
                                             <div className="flex-1">
                                                 <p className="font-bold text-slate-900 mb-1">Platform Version</p>
-                                                <p className="text-sm text-slate-600 mb-3">AI D Mart v{settings.appVersion} - All systems operational</p>
+                                                <p className="text-sm text-slate-600 mb-3">Platform v{settings.appVersion} - All systems operational</p>
                                                 <div className="flex items-center gap-2 text-xs text-slate-600">
                                                     <Mail size={14} />
                                                     <span>Support: {settings.supportEmail}</span>
@@ -3288,7 +3288,7 @@ export default function AdminDashboard() {
                             <Shield className="text-[#004D2C]" size={20} />
                         </div>
                         <div>
-                            <span className="text-xl font-black tracking-tight block text-white">AI D Mart</span>
+                            <span className="text-xl font-black tracking-tight block text-white">Admin Dashboard</span>
                             <span className="text-[10px] text-[#FFD700] font-bold tracking-widest uppercase">Admin Control</span>
                         </div>
                     </Link>
@@ -3577,7 +3577,7 @@ export default function AdminDashboard() {
                                     </div>
                                     <div>
                                         <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Company Name</label>
-                                        <input placeholder="e.g. AI D Mart Logistics" className="w-full bg-slate-50 border-none p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 font-bold" value={newJob.company} onChange={e => setNewJob({ ...newJob, company: e.target.value })} />
+                                        <input placeholder="e.g. My Logistics" className="w-full bg-slate-50 border-none p-4 rounded-xl outline-none focus:ring-2 focus:ring-blue-100 font-bold" value={newJob.company} onChange={e => setNewJob({ ...newJob, company: e.target.value })} />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>

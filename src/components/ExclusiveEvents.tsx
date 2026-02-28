@@ -1,7 +1,20 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Calendar, MapPin, Download, Clock, User, Phone, CreditCard, AlertCircle } from 'lucide-react';
+import { Calendar, MapPin, Download, Clock, User, Phone, CreditCard, AlertCircle, Camera, Video, Utensils, Sparkles, Music, Building, Scissors, Mail, Car, Home, X } from 'lucide-react';
+
+const services = [
+    { id: 'photography', name: 'Photography', icon: Camera, images: ['https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'videography', name: 'Videography', icon: Video, images: ['https://images.unsplash.com/photo-1579704603912-78ba7e70ea2d?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'catering', name: 'Catering', icon: Utensils, images: ['https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'decoration', name: 'Decoration', icon: Sparkles, images: ['https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'music', name: 'DJ & Music', icon: Music, images: ['https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'venue', name: 'Venue Booking', icon: Building, images: ['https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'makeup', name: 'Makeup & Styling', icon: Scissors, images: ['https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'invitation', name: 'Invitation Cards', icon: Mail, images: ['https://images.unsplash.com/photo-1561726055-77ee62886f77?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'transportation', name: 'Transportation', icon: Car, images: ['https://images.unsplash.com/photo-1518779836904-749e79435f37?auto=format&fit=crop&q=80&w=800'] },
+    { id: 'accommodation', name: 'Accommodation', icon: Home, images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'] }
+];
 
 interface ExclusiveEvent {
     id: string;
@@ -23,9 +36,11 @@ interface EventPass {
 
 const ExclusiveEvents = ({ userId }: { userId: string }) => {
     const [events, setEvents] = useState<ExclusiveEvent[]>([]);
+    const [selectedService, setSelectedService] = useState<{ name: string; images: string[] } | null>(null);
     const [passes, setPasses] = useState<EventPass[]>([]);
     const [loading, setLoading] = useState(true);
     const [showPassForm, setShowPassForm] = useState(false);
+    const [showServicesDropdown, setShowServicesDropdown] = useState(false);
     const [selectedEvent, setSelectedEvent] = useState<ExclusiveEvent | null>(null);
     const [formData, setFormData] = useState({
         eventDate: '',
@@ -139,7 +154,47 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
     }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-12">
+            {/* Our Services - Dropdown Style */}
+            <div className="relative z-20">
+                <button
+                    onClick={() => setShowServicesDropdown(!showServicesDropdown)}
+                    className="w-full flex items-center justify-between bg-white border border-[#00703C]/30 shadow-md rounded-2xl p-5 hover:bg-green-50 transition-colors"
+                >
+                    <span className="text-xl font-bold text-[#004D2C] flex items-center gap-2">
+                        <Sparkles className="text-[#FFD700]" /> Select Services
+                    </span>
+                    <div className="w-8 h-8 rounded-full bg-[#00703C]/10 flex items-center justify-center text-[#00703C]">
+                        {showServicesDropdown ? <X size={20} /> : <span className="font-bold">+</span>}
+                    </div>
+                </button>
+
+                {showServicesDropdown && (
+                    <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 max-h-96 overflow-y-auto z-30 animate-in fade-in slide-in-from-top-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {services.map(service => (
+                                <button
+                                    key={service.id}
+                                    onClick={() => {
+                                        setSelectedService({ name: service.name, images: service.images });
+                                        setShowServicesDropdown(false);
+                                    }}
+                                    className="flex items-center gap-4 p-4 rounded-xl hover:bg-green-50 text-left border border-transparent hover:border-green-100 transition-colors w-full group"
+                                >
+                                    <div className="w-12 h-12 rounded-full bg-green-100 text-[#00703C] flex items-center justify-center group-hover:bg-[#00703C] group-hover:text-white transition-colors shrink-0">
+                                        <service.icon size={20} />
+                                    </div>
+                                    <span className="font-bold text-gray-800 flex-1">{service.name}</span>
+                                    <span className="text-xs font-semibold text-[#00703C] opacity-0 group-hover:opacity-100 transition-opacity">
+                                        View Gallery &rarr;
+                                    </span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+
             {/* Exclusive Events */}
             <div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-6">🎫 Exclusive Events</h3>
@@ -201,9 +256,8 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                     <p className="text-slate-500 text-sm">Pass ID: {pass.passId}</p>
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
-                                        pass.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
-                                    }`}>
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${pass.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                                        }`}>
                                         {pass.status}
                                     </span>
                                     <button
@@ -225,7 +279,7 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                     <div className="bg-white rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto">
                         <h3 className="text-2xl font-bold text-slate-900 mb-6">Generate Event Pass</h3>
                         <p className="text-slate-600 mb-6">Event: {selectedEvent.name}</p>
-                        
+
                         <form onSubmit={handleGeneratePass} className="space-y-4">
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Event Date</label>
@@ -233,17 +287,17 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                     type="date"
                                     required
                                     value={formData.eventDate}
-                                    onChange={e => setFormData({...formData, eventDate: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, eventDate: e.target.value })}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Preferred Time Slot</label>
                                 <select
                                     required
                                     value={formData.timeSlot}
-                                    onChange={e => setFormData({...formData, timeSlot: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, timeSlot: e.target.value })}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                 >
                                     <option value="">Select Time</option>
@@ -252,7 +306,7 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                     <option value="5:00 PM - 8:00 PM">5:00 PM - 8:00 PM</option>
                                 </select>
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">ID Proof Number</label>
                                 <input
@@ -260,11 +314,11 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                     required
                                     placeholder="Aadhaar/PAN/Driving License"
                                     value={formData.idProof}
-                                    onChange={e => setFormData({...formData, idProof: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, idProof: e.target.value })}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Emergency Contact</label>
                                 <input
@@ -272,11 +326,11 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                     required
                                     placeholder="+91 9876543210"
                                     value={formData.emergencyContact}
-                                    onChange={e => setFormData({...formData, emergencyContact: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, emergencyContact: e.target.value })}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">City</label>
                                 <input
@@ -284,21 +338,21 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                     required
                                     placeholder="Your City"
                                     value={formData.city}
-                                    onChange={e => setFormData({...formData, city: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, city: e.target.value })}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                 />
                             </div>
-                            
+
                             <div>
                                 <label className="block text-sm font-bold text-slate-700 mb-2">Additional Notes (Optional)</label>
                                 <textarea
                                     placeholder="Any special requirements..."
                                     value={formData.notes}
-                                    onChange={e => setFormData({...formData, notes: e.target.value})}
+                                    onChange={e => setFormData({ ...formData, notes: e.target.value })}
                                     className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none h-20 resize-none"
                                 />
                             </div>
-                            
+
                             <div className="flex gap-4 pt-4">
                                 <button
                                     type="button"
@@ -315,6 +369,43 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                                 </button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            )}
+
+            {/* Image Gallery Modal */}
+            {selectedService && (
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+                    <div className="bg-white rounded-3xl p-6 max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl">
+                        <div className="flex justify-between items-center mb-6">
+                            <h3 className="text-2xl font-black text-[#004D2C] flex items-center gap-2">
+                                <Sparkles className="text-[#FFD700]" size={24} /> {selectedService.name} Gallery
+                            </h3>
+                            <button
+                                onClick={() => setSelectedService(null)}
+                                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-red-100 hover:text-red-500 transition-colors"
+                            >
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        <div className="overflow-y-auto pr-2 rounded-2xl">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {selectedService.images.map((img, idx) => (
+                                    <div key={idx} className="relative aspect-video rounded-xl overflow-hidden group shadow-md border border-[#00703C]/10 bg-gray-100">
+                                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                                        <img
+                                            src={img}
+                                            alt={`${selectedService.name} - Image ${idx + 1}`}
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                                            <span className="text-white font-medium drop-shadow-md">Beautiful {selectedService.name} Moment</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

@@ -12,12 +12,12 @@ async function getSettings() {
         }));
         return result.Item?.settings || {
             pointsPerReferral: 25,
-            approvalMode: 'manual',
+            approvalMode: 'auto',
             systemEnabled: true,
             pointsToWalletRate: 100,
         };
     } catch {
-        return { pointsPerReferral: 25, approvalMode: 'manual', systemEnabled: true, pointsToWalletRate: 100 };
+        return { pointsPerReferral: 25, approvalMode: 'auto', systemEnabled: true, pointsToWalletRate: 100 };
     }
 }
 

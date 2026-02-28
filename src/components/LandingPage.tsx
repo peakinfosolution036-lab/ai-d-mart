@@ -190,7 +190,7 @@ const Hero = () => {
                     <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#FFD700] via-white to-[#FFD700] animate-pulse">
                         Dream Prize
                     </span>
-                    <span className="block text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-light opacity-80">With AI D Mart Lucky Draw</span>
+                    <span className="block text-2xl sm:text-3xl md:text-5xl lg:text-6xl xl:text-7xl font-light opacity-80">With Our Lucky Draw</span>
                 </h1>
 
                 <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 sm:mb-12 max-w-4xl mx-auto font-light leading-relaxed px-4">
@@ -245,7 +245,7 @@ const AboutSection = () => (
                     </h2>
                     <div className="space-y-6 text-lg text-gray-700 leading-relaxed font-medium">
                         <p>
-                            AI D Mart is not just a marketplace; it&apos;s a gateway to possibilities. Our presence has now become global as we have fulfilled the dreams of many individuals, corporate and families through our integrated events and lucky draw systems.
+                            Our platform is not just a marketplace; it&apos;s a gateway to possibilities. Our presence has now become global as we have fulfilled the dreams of many individuals, corporate and families through our integrated events and lucky draw systems.
                         </p>
                         <p>
                             We specialize in offering complete service for weddings, seminars and events while providing a transparent platform for users to win life-changing prizes. Our team handles every detail so you can focus on the moment.

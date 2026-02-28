@@ -348,7 +348,7 @@ export default function LoginPage() {
                                 className="text-center mt-10"
                             >
                                 <p className="text-slate-600 font-medium">
-                                    New to AI D Mart?{' '}
+                                    New to our platform?{' '}
                                     <Link href="/register" className="text-[#00703C] font-extrabold hover:text-[#004D2C] hover:underline underline-offset-4 decoration-2">
                                         Create an Account
                                     </Link>

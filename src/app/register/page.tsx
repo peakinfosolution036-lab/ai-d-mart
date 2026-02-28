@@ -425,7 +425,7 @@ export default function RegisterPage() {
                         Back to Home
                     </Link>
                     <h1 className="text-3xl font-bold text-slate-900 mb-2">Partner Registration</h1>
-                    <p className="text-slate-500">Join AI D Mart and start your digital journey</p>
+                    <p className="text-slate-500">Join us and start your digital journey</p>
                 </div>
 
                 {/* Progress Steps */}
@@ -730,7 +730,7 @@ export default function RegisterPage() {
                             <p className="text-slate-500 text-sm mb-6">Pay ₹2,000 to complete your registration</p>
                             <UpiPayment
                                 amount={2000}
-                                description="AI D Mart Partner Registration"
+                                description="Partner Registration"
                                 onSuccess={handlePaymentSuccess}
                                 onCancel={prevStep}
                                 isLoading={isLoading}

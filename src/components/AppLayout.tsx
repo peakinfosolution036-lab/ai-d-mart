@@ -63,7 +63,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                             <div className="w-10 h-10 bg-gradient-to-br from-[#FFD700] to-[#00703C] rounded-xl flex items-center justify-center transform group-hover:rotate-12 transition-transform shadow-lg shadow-[#FFD700]/20">
                                 <Shield className="text-white" size={24} />
                             </div>
-                            <span className="text-xl font-black text-white drop-shadow-md">{APP_NAME}</span>
+                            <span className="text-xl font-black text-white drop-shadow-md hidden">{APP_NAME}</span>
                         </Link>
 
                         {/* Desktop Navigation */}
@@ -72,12 +72,12 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                                 { name: 'Home', path: '/' },
                                 { name: 'About', path: '/about' },
                                 { name: 'Shop', path: '/shop' },
-                                { name: 'Referral', path: '/referral' },
-                                { name: 'Lucky Draw', path: '/lucky-draw' },
-                                { name: 'Wallet', path: '/wallet' },
-                                { name: 'Awards', path: '/awards' },
                                 { name: 'Events', path: '/event-enquiry' },
-                                { name: 'Careers', path: '/jobs' },
+                                { name: 'Business', path: '/referral' },
+                                { name: 'Lucky Draw', path: '/lucky-draw' },
+                                { name: 'Awards', path: '/awards' },
+                                { name: 'Wallet', path: '/wallet' },
+                                { name: 'Careers', path: '/careers' },
                             ].map((item) => (
                                 <Link
                                     key={item.path}
@@ -142,12 +142,12 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                                     { name: 'Home', path: '/', icon: Home },
                                     { name: 'About', path: '/about', icon: Info },
                                     { name: 'Shop', path: '/shop', icon: Briefcase },
-                                    { name: 'Referral', path: '/referral', icon: Crown },
-                                    { name: 'Lucky Draw', path: '/lucky-draw', icon: Trophy },
-                                    { name: 'Wallet', path: '/wallet', icon: Wallet },
-                                    { name: 'Awards', path: '/awards', icon: Award },
                                     { name: 'Events', path: '/event-enquiry', icon: CalendarDays },
-                                    { name: 'Careers', path: '/jobs', icon: Briefcase },
+                                    { name: 'Business', path: '/referral', icon: Crown },
+                                    { name: 'Lucky Draw', path: '/lucky-draw', icon: Trophy },
+                                    { name: 'Awards', path: '/awards', icon: Award },
+                                    { name: 'Wallet', path: '/wallet', icon: Wallet },
+                                    { name: 'Careers', path: '/careers', icon: Briefcase },
                                 ].map((item) => (
                                     <button key={item.path} onClick={() => handleNav(item.path)} className="w-full text-left px-3 py-2 rounded-lg hover:bg-white/10 text-white font-medium flex items-center justify-between text-sm transition-colors">
                                         <span className="flex items-center gap-3"><item.icon size={18} className="text-[#FFD700]" /> {item.name}</span>

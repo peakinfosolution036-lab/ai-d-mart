@@ -40,6 +40,10 @@ const Shop = () => {
     const [processing, setProcessing] = useState(false);
     const [showUpiPayment, setShowUpiPayment] = useState(false);
 
+    // Search & Filter State
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('All');
+
     const addToCart = async (productId: string) => {
         if (!isLoggedIn) {
             alert('Please login to add items to cart');
@@ -269,6 +273,15 @@ const Shop = () => {
         );
     }
 
+    const categories = ['All', ...Array.from(new Set(products.map(p => p.category)))];
+
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            (product.description || '').toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+    });
+
     return (
         <section className="py-32 px-6 bg-[#F0FDF4] relative overflow-hidden min-h-screen">
             {/* Animated Background */}
@@ -300,9 +313,53 @@ const Shop = () => {
                     <p className="text-lg sm:text-xl text-[#004D2C] max-w-3xl mx-auto px-4 font-medium">Premium Products for Your Events</p>
                 </div>
 
+                {/* Search and Filters */}
+                <div className="mb-10 px-4">
+                    <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-[#00703C]/10">
+                        <div className="w-full md:w-1/2 relative">
+                            <input
+                                type="text"
+                                placeholder="Search products..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[#00703C] focus:border-transparent outline-none transition-all"
+                            />
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                                <span className="text-lg">🔍</span>
+                            </div>
+                        </div>
+                        <div className="w-full md:w-auto flex gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
+                            {categories.map(category => (
+                                <button
+                                    key={category}
+                                    onClick={() => setSelectedCategory(category)}
+                                    className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-all ${selectedCategory === category
+                                            ? 'bg-[#00703C] text-white shadow-md'
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        }`}
+                                >
+                                    {category}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+
                 {/* Products Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 lg:gap-8 px-4">
-                    {products.map((product) => (
+                    {filteredProducts.length === 0 ? (
+                        <div className="col-span-full text-center py-20 bg-white rounded-3xl border border-[#00703C]/10 shadow-sm">
+                            <div className="text-6xl mb-4">🔍</div>
+                            <h3 className="text-2xl font-bold text-[#004D2C] mb-2">No products found</h3>
+                            <p className="text-gray-500">Try adjusting your search or category filter.</p>
+                            <button
+                                onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
+                                className="mt-6 px-6 py-2 bg-[#FFD700] text-[#00703C] font-bold rounded-full hover:shadow-lg transition-all"
+                            >
+                                Clear Filters
+                            </button>
+                        </div>
+                    ) : filteredProducts.map((product) => (
                         <div key={product.id} className="group bg-white rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover:scale-105 hover:-translate-y-2 border border-[#00703C]/10">
                             <div className="aspect-square overflow-hidden relative bg-gray-100">
                                 {product.image ? (

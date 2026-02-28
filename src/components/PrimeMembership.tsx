@@ -247,7 +247,7 @@ const PrimeMembership: React.FC<PrimeMembershipProps> = ({ isOpen, onClose, refe
                                 <input
                                     type="text"
                                     value={formData.referralCode}
-                                    onChange={(e) => setFormData({...formData, referralCode: e.target.value})}
+                                    onChange={(e) => setFormData({ ...formData, referralCode: e.target.value })}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent"
                                     placeholder="Enter referral code to give ₹500 to referrer"
                                 />
@@ -282,7 +282,7 @@ const PrimeMembership: React.FC<PrimeMembershipProps> = ({ isOpen, onClose, refe
                                     type="checkbox"
                                     id="terms"
                                     checked={formData.agreeTerms}
-                                    onChange={(e) => setFormData({...formData, agreeTerms: e.target.checked})}
+                                    onChange={(e) => setFormData({ ...formData, agreeTerms: e.target.checked })}
                                     className="mt-1"
                                 />
                                 <label htmlFor="terms" className="text-sm text-gray-600">
@@ -301,7 +301,7 @@ const PrimeMembership: React.FC<PrimeMembershipProps> = ({ isOpen, onClose, refe
                             {formData.agreeTerms ? (
                                 <UpiPayment
                                     amount={primeConfig.discountPrice}
-                                    description="Prime Membership - AI D Mart"
+                                    description="Prime Membership"
                                     onSuccess={handleUpiSuccess}
                                     onCancel={() => setStep(1)}
                                     isLoading={loading}
@@ -337,7 +337,7 @@ const PrimeMembership: React.FC<PrimeMembershipProps> = ({ isOpen, onClose, refe
                         <p className="text-xl text-gray-600 mb-6">
                             Your Prime membership is now active
                         </p>
-                        
+
                         {membershipData && (
                             <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-xl p-6 mb-6 border-2 border-yellow-200">
                                 <div className="text-lg font-bold text-gray-900 mb-2">

@@ -1072,7 +1072,7 @@ export default function CustomerDashboard() {
             await openCheckout({
                 amount: orderData.amount,
                 currency: orderData.currency,
-                name: 'AI D Mart',
+                name: 'Platform',
                 description: 'Wallet Recharge',
                 order_id: orderData.orderId,
                 prefill: {
@@ -1262,7 +1262,7 @@ export default function CustomerDashboard() {
                             <div className="flex justify-between items-center px-4">
                                 <div>
                                     <h4 className="text-2xl font-black text-slate-900">Trending Now</h4>
-                                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Exciting deals from AI D Mart</p>
+                                    <p className="text-slate-400 text-sm font-bold uppercase tracking-widest">Exciting deals</p>
                                 </div>
                                 <button className="text-blue-600 font-bold hover:underline">See Global Inventory</button>
                             </div>
@@ -1724,7 +1724,7 @@ export default function CustomerDashboard() {
                                                     <div className="flex flex-col">
                                                         <span className="text-[10px] font-black text-white/40 uppercase tracking-widest leading-none mb-1.5">Official Partner</span>
                                                         <span className="text-sm font-black text-white uppercase tracking-wider truncate max-w-[140px] drop-shadow-md">
-                                                            {offer.businessName || 'AI D Mart Elite'}
+                                                            {offer.businessName || 'Platform Elite'}
                                                         </span>
                                                     </div>
                                                 </div>
@@ -2311,7 +2311,7 @@ export default function CustomerDashboard() {
                                                 </div>
                                             </div>
                                             <h4 className="text-xl font-bold text-slate-900 mb-2 truncate">{promo.title}</h4>
-                                            <p className="text-slate-500 text-sm mb-6 line-clamp-2 min-h-[40px]">{promo.description || 'Exclusive discount for AI D Mart users.'}</p>
+                                            <p className="text-slate-500 text-sm mb-6 line-clamp-2 min-h-[40px]">{promo.description || 'Exclusive discount for our users.'}</p>
                                         </div>
 
                                         <div className="relative z-10">
@@ -2391,7 +2391,7 @@ export default function CustomerDashboard() {
                             </div>
                             <Trophy className="absolute right-0 bottom-0 text-white/10 -mr-8 -mb-8" size={200} />
                         </div>
-                        
+
                         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
                             <h4 className="text-xl font-bold text-slate-900 mb-4">How it Works</h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -2441,7 +2441,7 @@ export default function CustomerDashboard() {
                             </div>
                             <Users className="absolute right-0 bottom-0 text-white/10 -mr-8 -mb-8" size={200} />
                         </div>
-                        
+
                         <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
                             <h4 className="text-xl font-bold text-slate-900 mb-4">How it Works</h4>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -2871,7 +2871,7 @@ export default function CustomerDashboard() {
                         <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/20">
                             <Shield className="text-white" size={20} />
                         </div>
-                        <span className="text-2xl font-black text-slate-900 tracking-tight">AI D Mart</span>
+                        <span className="text-2xl font-black text-slate-900 tracking-tight">Dashboard</span>
                     </Link>
                 </div>
 

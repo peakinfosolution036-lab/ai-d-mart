@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { QueryCommand, ScanCommand, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
 import { docClient } from '@/lib/dynamodb';
 import { v4 as uuidv4 } from 'uuid';
+import { sendLuckyDrawConfirmationEmail } from '@/lib/email-resend';
 
 export async function POST(request: NextRequest) {
     try {
         const {
             productId, userId, userName, numbers, paymentId,
-            isFreeRequest, participantName, participantMobile, participantAddress, participantPhoto
+            isFreeRequest, participantName, participantMobile, participantAddress, participantEmail, participantPhoto
         } = await request.json();
 
         if (!productId || !userId || !numbers || !Array.isArray(numbers)) {
@@ -136,6 +137,22 @@ export async function POST(request: NextRequest) {
             }
             console.error('Transaction Error:', txError);
             throw txError;
+        }
+
+        // Send confirmation email
+        if (participantEmail) {
+            try {
+                await sendLuckyDrawConfirmationEmail({
+                    name: participantName || userName || 'Guest',
+                    email: participantEmail,
+                    mobile: participantMobile,
+                    luckyNumbers: numbers,
+                    bookingId,
+                    photoDataUrl: participantPhoto
+                });
+            } catch (emailError) {
+                console.error('Failed to send confirmation email:', emailError);
+            }
         }
 
         return NextResponse.json({ success: true, data: booking });

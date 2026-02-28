@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
+import { Shield, Briefcase, FileText, Truck, RefreshCcw, CreditCard } from 'lucide-react';
 
 const Reveal = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -64,14 +65,14 @@ export const Footer = () => (
                     <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors">Twitter</a>
                 </div>
             </div>
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 mt-6 pt-6 border-t border-slate-100 text-sm font-medium text-slate-500">
-                <Link href="/vision-mission" className="hover:text-[#00703C] transition-colors">Vision & Mission</Link>
-                <Link href="/digital-marketing-job" className="hover:text-[#00703C] transition-colors">Careers</Link>
-                <Link href="/terms" className="hover:text-[#00703C] transition-colors">Terms & Conditions</Link>
-                <Link href="/privacy-policy" className="hover:text-[#00703C] transition-colors">Privacy Policy</Link>
-                <Link href="/shipping-policy" className="hover:text-[#00703C] transition-colors">Shipping Policy</Link>
-                <Link href="/refund-policy" className="hover:text-[#00703C] transition-colors">Refund Policy</Link>
-                <Link href="/payment-policy" className="hover:text-[#00703C] transition-colors">Payment Policy</Link>
+            <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-4 mt-6 pt-6 border-t border-slate-100 text-sm font-medium text-slate-500">
+                <Link href="/about" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><Shield size={16} /> Vision & Mission</Link>
+                <Link href="/careers" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><Briefcase size={16} /> Careers</Link>
+                <Link href="/terms" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><FileText size={16} /> Terms & Conditions</Link>
+                <Link href="/privacy-policy" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><Shield size={16} /> Privacy Policy</Link>
+                <Link href="/shipping-policy" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><Truck size={16} /> Shipping Policy</Link>
+                <Link href="/refund-policy" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><RefreshCcw size={16} /> Refund Policy</Link>
+                <Link href="/payment-policy" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><CreditCard size={16} /> Payment Policy</Link>
                 <span className="w-full md:w-auto text-center mt-2 md:mt-0 text-slate-400">© 2026 Devaramane Events and Industries</span>
             </div>
         </div>

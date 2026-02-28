@@ -141,7 +141,7 @@ class MockDatabase {
             },
             {
                 title: 'Delivery Partner',
-                company: 'AI D Mart Logistics',
+                company: 'Our Logistics',
                 category: 'Logistics',
                 description: 'Deliver packages to customers',
                 type: 'Part Time' as const,
@@ -151,7 +151,7 @@ class MockDatabase {
             },
             {
                 title: 'Customer Support',
-                company: 'AI D Mart',
+                company: 'Primary Platform',
                 category: 'Support',
                 description: 'Handle customer inquiries and support',
                 type: 'Full Time' as const,

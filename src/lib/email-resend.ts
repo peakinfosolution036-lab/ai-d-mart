@@ -18,9 +18,10 @@ interface SendEmailParams {
     to: string;
     subject: string;
     htmlBody: string;
+    attachments?: { filename: string; content: string }[];
 }
 
-export async function sendEmail({ to, subject, htmlBody }: SendEmailParams) {
+export async function sendEmail({ to, subject, htmlBody, attachments }: SendEmailParams) {
     try {
         // In development/testing with Resend free tier, override recipient
         // Resend free tier only allows sending to your verified email
@@ -48,6 +49,7 @@ export async function sendEmail({ to, subject, htmlBody }: SendEmailParams) {
             to: [recipient],
             subject: `[TEST] ${subject}`,
             html: finalHtml,
+            attachments: attachments,
         });
 
         console.log('Email sent successfully via Resend:', data);
@@ -418,4 +420,78 @@ export async function sendEventEnquiryConfirmation({
     `;
 
     return sendEmail({ to: email, subject, htmlBody });
+}
+
+// Lucky Draw Confirmation Email
+export interface LuckyDrawConfirmationParams {
+    name: string;
+    email: string;
+    mobile: string;
+    luckyNumbers: number[];
+    bookingId: string;
+    photoDataUrl?: string;
+}
+
+export async function sendLuckyDrawConfirmationEmail({
+    name, email, mobile, luckyNumbers, bookingId, photoDataUrl
+}: LuckyDrawConfirmationParams) {
+    const subject = `🎉 Lucky Draw Ticket Confirmation - ${bookingId.slice(0, 8).toUpperCase()}`;
+    const numbersList = luckyNumbers.join(', ');
+
+    const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; margin: 0; padding: 0; background-color: #f4f4f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; }
+        .header { background: linear-gradient(135deg, #FFD700 0%, #F59E0B 100%); padding: 40px 30px; text-align: center; color: #00703C; }
+        .header h1 { margin: 0; font-size: 24px; font-weight: 900; }
+        .content { padding: 40px 30px; }
+        .greeting { font-size: 18px; font-weight: 600; color: #1e293b; margin-bottom: 20px; }
+        .details-box { background: #E5F6EB; border-left: 4px solid #00703C; padding: 20px; margin: 20px 0; border-radius: 8px; }
+        .detail-item { margin: 10px 0; color: #00703C; }
+        .detail-label { font-weight: 800; display: inline-block; min-width: 120px; text-transform: uppercase; font-size: 12px; }
+        .footer { background: #00703C; padding: 30px; text-align: center; color: #fff; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎉 TICKET CONFIRMED!</h1>
+        </div>
+        <div class="content">
+            <div class="greeting">Hi ${name},</div>
+            <p>Your Lucky Draw ticket has been successfully booked!</p>
+            <div class="details-box">
+                <div class="detail-item"><span class="detail-label">Name:</span> <strong>${name}</strong></div>
+                <div class="detail-item"><span class="detail-label">Mobile:</span> <strong>${mobile || 'Not provided'}</strong></div>
+                <div class="detail-item"><span class="detail-label">Tickets:</span> <strong>${luckyNumbers.length}</strong></div>
+                <div class="detail-item"><span class="detail-label">Lucky Number(s):</span> <strong style="font-size: 18px; color: #D32F2F;">${numbersList}</strong></div>
+                <div class="detail-item"><span class="detail-label">Booking ID:</span> ${bookingId}</div>
+                <div class="detail-item"><span class="detail-label">Payment:</span> <strong style="color: #00703C;">CONFIRMED ✅</strong></div>
+            </div>
+            <p>Keep your fingers crossed! We will contact you if you win.</p>
+        </div>
+        <div class="footer">© ${new Date().getFullYear()} AICLUB BIG WINNER. All rights reserved.</div>
+    </div>
+</body>
+</html>
+    `;
+
+    let attachments = [];
+    if (photoDataUrl && photoDataUrl.includes('base64,')) {
+        // extract base64 string
+        const base64Data = photoDataUrl.split('base64,')[1];
+        if (base64Data) {
+            attachments.push({
+                filename: 'participant-photo.jpg',
+                content: base64Data
+            });
+        }
+    }
+
+    return sendEmail({ to: email, subject, htmlBody, attachments });
 }
