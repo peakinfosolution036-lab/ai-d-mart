@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { Shield, Briefcase, FileText, Truck, RefreshCcw, CreditCard } from 'lucide-react';
+import { Shield, Briefcase, FileText, Truck, RefreshCcw, CreditCard, Instagram, Linkedin, Twitter } from 'lucide-react';
 
 const Reveal = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
     const ref = useRef<HTMLDivElement>(null);
@@ -59,10 +59,10 @@ export const Footer = () => (
                     </p>
                     <p className="text-[#00703C] mt-2 font-black">devaramane@gmail.com | +91-9008385588</p>
                 </div>
-                <div className="flex gap-8 mt-6 md:mt-0 font-bold text-lg">
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors">Instagram</a>
-                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors">LinkedIn</a>
-                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors">Twitter</a>
+                <div className="flex gap-4 mt-6 md:mt-0 items-center">
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors"><Instagram size={22} /></a>
+                    <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors"><Linkedin size={22} /></a>
+                    <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="interactive text-[#00703C] hover:text-[#004D2C] transition-colors"><Twitter size={22} /></a>
                 </div>
             </div>
             <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-4 mt-6 pt-6 border-t border-slate-100 text-sm font-medium text-slate-500">
