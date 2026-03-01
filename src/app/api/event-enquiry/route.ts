@@ -20,7 +20,24 @@ export async function GET(request: NextRequest) {
                 'DJ & Music', 'Venue Booking', 'Makeup & Styling',
                 'Invitation Cards', 'Transportation', 'Accommodation'
             ];
-            return NextResponse.json({ success: true, data: { services } });
+            const fs = require('fs');
+            const path = require('path');
+
+            const serviceImages: Record<string, string[]> = {};
+            const publicDir = path.join(process.cwd(), 'public', 'services');
+
+            services.forEach((service: string) => {
+                const folderName = service.replace(/[^a-zA-Z]/g, '').toLowerCase();
+                const servicePath = path.join(publicDir, folderName);
+                if (fs.existsSync(servicePath)) {
+                    const files = fs.readdirSync(servicePath).filter((f: string) => f.match(/\.(jpg|jpeg|png|webp|gif|svg)$/i));
+                    serviceImages[service] = files.map((f: string) => `/services/${folderName}/${f}`);
+                } else {
+                    serviceImages[service] = [];
+                }
+            });
+
+            return NextResponse.json({ success: true, data: { services, serviceImages } });
         }
 
         // Admin: list all enquiries with filters

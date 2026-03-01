@@ -5,6 +5,7 @@ import { Calendar, Phone, Mail, FileText, Send, CheckCircle, Camera, X, Sparkles
 
 export default function EventEnquiryPage() {
     const [services, setServices] = useState<string[]>([]);
+    const [serviceImages, setServiceImages] = useState<Record<string, string[]>>({});
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
@@ -27,7 +28,10 @@ export default function EventEnquiryPage() {
         try {
             const res = await fetch('/api/event-enquiry?action=services');
             const data = await res.json();
-            if (data.success) setServices(data.data.services);
+            if (data.success) {
+                setServices(data.data.services);
+                if (data.data.serviceImages) setServiceImages(data.data.serviceImages);
+            }
         } catch (e) { console.error(e); }
         finally { setLoading(false); }
     };
@@ -181,6 +185,33 @@ export default function EventEnquiryPage() {
                             </div>
                         )}
                     </div>
+
+                    {/* Previews based on selected services */}
+                    {selectedServices.length > 0 && (
+                        <div className="mb-6 space-y-4">
+                            {selectedServices.map(service => {
+                                const images = serviceImages[service] || [];
+                                if (images.length === 0) return null;
+                                return (
+                                    <div key={service} className="bg-slate-50 p-4 rounded-xl border border-emerald-100">
+                                        <p className="text-sm font-bold text-emerald-800 mb-3">{service} Work Example</p>
+                                        <div className="grid grid-cols-3 gap-3">
+                                            {images.slice(0, 3).map((img, i) => (
+                                                <div key={i} className="aspect-square bg-gray-200 rounded-lg overflow-hidden shadow-sm relative group cursor-pointer hover:shadow-md transition-shadow">
+                                                    <img
+                                                        src={img}
+                                                        alt={`${service} example ${i + 1}`}
+                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 bg-gray-200"
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    )}
 
                     {/* Notes */}
                     <div className="mb-8">

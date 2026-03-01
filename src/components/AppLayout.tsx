@@ -137,7 +137,7 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                     {/* Mobile Menu */}
                     {menuOpen && (
                         <div className="lg:hidden bg-[#00703C] border-t border-white/10 shadow-xl">
-                            <nav className="px-4 py-4 space-y-1 max-h-96 overflow-y-auto">
+                            <nav className="px-4 py-2 space-y-0.5 max-h-[85vh] overflow-y-auto">
                                 {[
                                     { name: 'Home', path: '/', icon: Home },
                                     { name: 'About', path: '/about', icon: Info },

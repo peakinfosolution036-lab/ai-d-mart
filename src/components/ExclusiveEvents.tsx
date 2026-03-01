@@ -4,16 +4,16 @@ import React, { useState, useEffect } from 'react';
 import { Calendar, MapPin, Download, Clock, User, Phone, CreditCard, AlertCircle, Camera, Video, Utensils, Sparkles, Music, Building, Scissors, Mail, Car, Home, X } from 'lucide-react';
 
 const services = [
-    { id: 'photography', name: 'Photography', icon: Camera, images: ['https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=800', 'https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'videography', name: 'Videography', icon: Video, images: ['https://images.unsplash.com/photo-1579704603912-78ba7e70ea2d?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'catering', name: 'Catering', icon: Utensils, images: ['https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'decoration', name: 'Decoration', icon: Sparkles, images: ['https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'music', name: 'DJ & Music', icon: Music, images: ['https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'venue', name: 'Venue Booking', icon: Building, images: ['https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'makeup', name: 'Makeup & Styling', icon: Scissors, images: ['https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'invitation', name: 'Invitation Cards', icon: Mail, images: ['https://images.unsplash.com/photo-1561726055-77ee62886f77?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'transportation', name: 'Transportation', icon: Car, images: ['https://images.unsplash.com/photo-1518779836904-749e79435f37?auto=format&fit=crop&q=80&w=800'] },
-    { id: 'accommodation', name: 'Accommodation', icon: Home, images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=800'] }
+    { id: 'photography', name: 'Photography', icon: Camera, images: ['/services/photography/1.jpg', '/services/photography/2.jpg', '/services/photography/3.jpg'] },
+    { id: 'videography', name: 'Videography', icon: Video, images: ['/services/videography/1.jpg', '/services/videography/2.jpg', '/services/videography/3.jpg'] },
+    { id: 'catering', name: 'Catering', icon: Utensils, images: ['/services/catering/1.jpg', '/services/catering/2.jpg', '/services/catering/3.jpg'] },
+    { id: 'decoration', name: 'Decoration', icon: Sparkles, images: ['/services/decoration/1.jpg', '/services/decoration/2.jpg', '/services/decoration/3.jpg'] },
+    { id: 'music', name: 'DJ & Music', icon: Music, images: ['/services/djmusic/1.jpg', '/services/djmusic/2.jpg', '/services/djmusic/3.jpg'] },
+    { id: 'venue', name: 'Venue Booking', icon: Building, images: ['/services/venuebooking/1.jpg', '/services/venuebooking/2.jpg', '/services/venuebooking/3.jpg'] },
+    { id: 'makeup', name: 'Makeup & Styling', icon: Scissors, images: ['/services/makeupstyling/1.jpg', '/services/makeupstyling/2.jpg', '/services/makeupstyling/3.jpg'] },
+    { id: 'invitation', name: 'Invitation Cards', icon: Mail, images: ['/services/invitationcards/1.jpg', '/services/invitationcards/2.jpg', '/services/invitationcards/3.jpg'] },
+    { id: 'transportation', name: 'Transportation', icon: Car, images: ['/services/transportation/1.jpg', '/services/transportation/2.jpg', '/services/transportation/3.jpg'] },
+    { id: 'accommodation', name: 'Accommodation', icon: Home, images: ['/services/accommodation/1.jpg', '/services/accommodation/2.jpg', '/services/accommodation/3.jpg'] }
 ];
 
 interface ExclusiveEvent {
@@ -195,6 +195,35 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                 )}
             </div>
 
+            {/* Inline Service Gallery */}
+            {selectedService && (
+                <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-5 animate-in fade-in duration-300 mt-6 !mb-8">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-bold text-[#004D2C] flex items-center gap-2">
+                            <Sparkles className="text-[#FFD700]" size={20} /> {selectedService.name} Examples
+                        </h3>
+                        <button
+                            onClick={() => setSelectedService(null)}
+                            className="bg-gray-100 text-gray-500 p-1.5 rounded-full hover:bg-red-100 hover:text-red-500 transition-colors"
+                        >
+                            <X size={16} />
+                        </button>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        {selectedService.images.slice(0, 3).map((img: string, idx: number) => (
+                            <div key={idx} className="relative aspect-video sm:aspect-square md:aspect-video rounded-xl overflow-hidden group shadow border border-[#00703C]/10 bg-gray-100">
+                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                <img
+                                    src={img}
+                                    alt={`${selectedService.name} Example ${idx + 1}`}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Exclusive Events */}
             <div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-6">🎫 Exclusive Events</h3>
@@ -373,42 +402,6 @@ const ExclusiveEvents = ({ userId }: { userId: string }) => {
                 </div>
             )}
 
-            {/* Image Gallery Modal */}
-            {selectedService && (
-                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-                    <div className="bg-white rounded-3xl p-6 max-w-4xl w-full max-h-[90vh] flex flex-col shadow-2xl">
-                        <div className="flex justify-between items-center mb-6">
-                            <h3 className="text-2xl font-black text-[#004D2C] flex items-center gap-2">
-                                <Sparkles className="text-[#FFD700]" size={24} /> {selectedService.name} Gallery
-                            </h3>
-                            <button
-                                onClick={() => setSelectedService(null)}
-                                className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 hover:bg-red-100 hover:text-red-500 transition-colors"
-                            >
-                                <X size={20} />
-                            </button>
-                        </div>
-
-                        <div className="overflow-y-auto pr-2 rounded-2xl">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {selectedService.images.map((img, idx) => (
-                                    <div key={idx} className="relative aspect-video rounded-xl overflow-hidden group shadow-md border border-[#00703C]/10 bg-gray-100">
-                                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                                        <img
-                                            src={img}
-                                            alt={`${selectedService.name} - Image ${idx + 1}`}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
-                                            <span className="text-white font-medium drop-shadow-md">Beautiful {selectedService.name} Moment</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

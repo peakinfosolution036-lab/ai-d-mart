@@ -488,8 +488,18 @@ export default function RegisterPage() {
                                     <input
                                         type="text"
                                         name="aadhaarPan"
-                                        value={formData.aadhaarPan}
-                                        onChange={handleInput}
+                                        value={formData.aadhaarPan.length > 4
+                                            ? formData.aadhaarPan.slice(0, 4) + '*'.repeat(formData.aadhaarPan.length - 4)
+                                            : formData.aadhaarPan}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (val.length < formData.aadhaarPan.length) {
+                                                setFormData(prev => ({ ...prev, aadhaarPan: prev.aadhaarPan.slice(0, val.length) }));
+                                            } else {
+                                                const added = val.slice(formData.aadhaarPan.length).replace(/\*/g, '');
+                                                setFormData(prev => ({ ...prev, aadhaarPan: prev.aadhaarPan + added }));
+                                            }
+                                        }}
                                         placeholder="Enter Aadhaar or PAN number"
                                         className="w-full px-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
                                     />
