@@ -631,10 +631,10 @@ export default function LuckyDrawPage() {
             {/* Advanced Booking Modal */}
             {selectedProduct && (
                 <div className="fixed inset-0 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 z-50">
-                    <div className="bg-white rounded-3xl w-full max-w-4xl h-[90vh] overflow-hidden shadow-2xl relative flex flex-col md:flex-row">
+                    <div className="bg-white rounded-3xl w-full max-w-4xl h-[90vh] overflow-y-auto md:overflow-hidden shadow-2xl relative flex flex-col md:flex-row">
 
                         {/* Summary & Form Panel (Left) */}
-                        <div className="md:w-1/2 p-6 md:p-8 bg-gray-50 overflow-y-auto">
+                        <div className="md:w-1/2 p-6 md:p-8 bg-gray-50 flex-none md:overflow-y-auto">
                             <button onClick={() => setSelectedProduct(null)} className="md:hidden absolute top-4 right-4 bg-gray-200 p-2 rounded-full hover:bg-gray-300 z-10">
                                 <X className="w-4 h-4" />
                             </button>
@@ -769,7 +769,7 @@ export default function LuckyDrawPage() {
                         </div>
 
                         {/* Number Picker (Right) */}
-                        <div className="md:w-1/2 bg-[#00703C] p-6 text-white flex flex-col">
+                        <div className="md:w-1/2 bg-[#00703C] p-6 text-white flex flex-col flex-none md:overflow-y-auto">
                             <button onClick={() => setSelectedProduct(null)} className="hidden md:block absolute top-6 right-6 bg-white/20 p-2 rounded-full hover:bg-white/40">
                                 <X className="w-4 h-4" />
                             </button>
@@ -778,7 +778,7 @@ export default function LuckyDrawPage() {
                                 Pick Numbers <span className="bg-[#FFD700] text-[#00703C] text-xs px-2 py-0.5 rounded-full">{selectedNumbers.length} Selected</span>
                             </h3>
 
-                            <div className="flex-1 overflow-y-auto mb-6 pr-2">
+                            <div className="mb-6 pr-2 md:flex-1 md:overflow-y-auto">
                                 <div className="grid grid-cols-7 gap-2">
                                     {Array.from({ length: selectedProduct.totalNumbers || 49 }, (_, i) => i + 1).map(num => (
                                         <button
