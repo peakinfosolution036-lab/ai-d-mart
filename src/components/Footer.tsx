@@ -74,6 +74,12 @@ export const Footer = () => (
                 <Link href="/refund-policy" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><RefreshCcw size={16} /> Refund Policy</Link>
                 <Link href="/payment-policy" className="flex items-center gap-2 hover:text-[#00703C] transition-colors"><CreditCard size={16} /> Payment Policy</Link>
                 <span className="w-full md:w-auto text-center mt-2 md:mt-0 text-slate-400">© 2026 Devaramane Events and Industries</span>
+                <span className="w-full text-center mt-1 text-slate-400 text-xs">
+                    Designed &amp; Developed by{' '}
+                    <a href="https://peakinfosolution.com" target="_blank" rel="noopener noreferrer" className="text-[#00703C] hover:underline font-semibold">
+                        Peakinfosolution.com
+                    </a>
+                </span>
             </div>
         </div>
     </footer>
