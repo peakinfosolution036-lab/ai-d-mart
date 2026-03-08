@@ -806,7 +806,7 @@ export default function LuckyDrawPage() {
 
                             <div className="mb-6 pr-2 md:flex-1 md:overflow-y-auto">
                                 <div className="grid grid-cols-7 gap-2">
-                                    {Array.from({ length: selectedProduct.totalNumbers || 49 }, (_, i) => i + 1).map(num => (
+                                    {(selectedProduct.availableNumbers || Array.from({ length: selectedProduct.totalNumbers || 49 }, (_, i) => i + 1)).map(num => (
                                         <button
                                             key={num}
                                             onClick={() => {
