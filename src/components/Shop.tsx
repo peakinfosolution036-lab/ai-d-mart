@@ -431,10 +431,10 @@ const Shop = () => {
                                     <div className="mt-auto space-y-4">
                                         <div className="flex items-end justify-between">
                                             <div>
-                                                <p className="text-xs text-gray-400 font-bold line-through mb-0.5">₹{originalPrice.toLocaleString('en-IN')}</p>
+                                                <p className="text-xs text-gray-400 font-bold line-through mb-0.5">₹{(originalPrice || 0).toLocaleString('en-IN')}</p>
                                                 <div className="flex items-baseline gap-2">
-                                                    <span className="text-2xl font-black text-gray-900">₹{product.price.toLocaleString('en-IN')}</span>
-                                                    <span className="text-xs font-bold text-red-500 mb-1">Save ₹{savings.toLocaleString('en-IN')}</span>
+                                                    <span className="text-2xl font-black text-gray-900">₹{(product.price || 0).toLocaleString('en-IN')}</span>
+                                                    <span className="text-xs font-bold text-red-500 mb-1">Save ₹{(savings || 0).toLocaleString('en-IN')}</span>
                                                 </div>
                                             </div>
                                         </div>
