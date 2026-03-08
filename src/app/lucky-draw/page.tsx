@@ -78,6 +78,7 @@ export default function LuckyDrawPage() {
     const [participantEmail, setParticipantEmail] = useState('');
     const [participantCityState, setParticipantCityState] = useState('');
     const [participantPhoto, setParticipantPhoto] = useState<string | null>(null);
+    const [participantPhotoFile, setParticipantPhotoFile] = useState<File | null>(null);
     const [agreeToTerms, setAgreeToTerms] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
     const [lastTransactionId, setLastTransactionId] = useState<string>('');
@@ -222,6 +223,7 @@ export default function LuckyDrawPage() {
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
+            setParticipantPhotoFile(file);
             const reader = new FileReader();
             reader.onloadend = () => {
                 setParticipantPhoto(reader.result as string);
@@ -250,6 +252,30 @@ export default function LuckyDrawPage() {
         // If amount is 0 (only free ticket selected), bypass payment
         const isFreeTransaction = totalAmount === 0;
 
+        let finalPhotoUrl = participantPhoto;
+        if (participantPhotoFile) {
+            try {
+                const formData = new FormData();
+                formData.append('image', participantPhotoFile);
+                formData.append('folder', 'lucky-draw-photos');
+
+                const uploadRes = await fetch('/api/upload/payment-screenshot', {
+                    method: 'POST',
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                if (uploadData.success) {
+                    finalPhotoUrl = uploadData.url;
+                } else {
+                    alert('Photo upload failed: ' + (uploadData.error || 'Unknown error'));
+                    return;
+                }
+            } catch (err) {
+                alert('Photo upload failed. Please try again.');
+                return;
+            }
+        }
+
         try {
             const res = await fetch('/api/lucky-draw/bookings', {
                 method: 'POST',
@@ -264,7 +290,7 @@ export default function LuckyDrawPage() {
                     participantMobile,
                     participantAddress,
                     participantEmail,
-                    participantPhoto,
+                    participantPhoto: finalPhotoUrl,
                     isFreeRequest: isFreeTransaction
                 })
             });
@@ -964,6 +990,7 @@ export default function LuckyDrawPage() {
                                 setParticipantCityState('');
                                 setParticipantEmail('');
                                 setParticipantPhoto(null);
+                                setParticipantPhotoFile(null);
                                 setAgreeToTerms(false);
                             }}
                             className="relative z-20 w-full bg-[#00703C] text-white py-3 rounded-xl font-bold hover:bg-[#005c30] transition-all shadow-lg hover:shadow-xl"
