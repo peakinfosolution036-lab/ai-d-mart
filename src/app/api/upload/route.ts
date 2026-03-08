@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 const s3 = new S3Client({
@@ -33,8 +32,8 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'No file uploaded' }, { status: 400 });
         }
 
-        if (!ALLOWED_TYPES.includes(file.type)) {
-            return NextResponse.json({ error: 'Invalid file type. Only JPEG, PNG, WebP, GIF allowed.' }, { status: 400 });
+        if (!file.type.startsWith('image/')) {
+            return NextResponse.json({ error: 'Invalid file type. Only images are allowed.' }, { status: 400 });
         }
 
         if (file.size > MAX_SIZE) {

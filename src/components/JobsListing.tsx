@@ -165,53 +165,35 @@ export default function JobsListing() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredJobs.map(job => (
-                        <div key={job.id} className="group bg-white rounded-3xl border border-gray-200 p-6 hover:shadow-2xl hover:shadow-emerald-100/50 transition-all hover:-translate-y-1 flex flex-col h-full">
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="p-2.5 bg-gray-50 rounded-2xl border border-gray-100 group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors">
-                                    <Building2 className="text-gray-400 group-hover:text-emerald-500 transition-colors" size={24} />
+                        <div key={job.id} className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:border-[#00703C]/30 transition-all hover:-translate-y-1 flex flex-col h-full">
+                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#00703C] transition-colors mb-1">{job.title}</h3>
+                            <p className="text-sm font-medium text-gray-500 mb-6">{job.company}</p>
+
+                            <div className="space-y-3 mb-8 flex-1">
+                                <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                    <span className="text-lg">📍</span>
+                                    <span className="font-medium">{job.location}</span>
                                 </div>
-                                <span className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">{job.type}</span>
+                                <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                    <span className="text-lg">💼</span>
+                                    <span className="font-medium">{job.type}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                    <span className="text-lg">💰</span>
+                                    <span className="font-medium">{job.salaryRange}</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                    <span className="text-lg">📅</span>
+                                    <span className="font-medium">{job.experience || 'Not specified'}</span>
+                                </div>
                             </div>
 
-                            <h3 className="text-lg font-black text-gray-800 group-hover:text-emerald-700 transition-colors mb-1">{job.title}</h3>
-                            <p className="text-sm font-bold text-gray-400 mb-4">{job.company}</p>
-
-                            <div className="space-y-2 mb-6 flex-1">
-                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
-                                    <MapPin size={16} className="text-emerald-500" />
-                                    <span className="font-bold text-gray-700">Location:</span> {job.location}
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
-                                    <Briefcase size={16} className="text-blue-500" />
-                                    <span className="font-bold text-gray-700">Type:</span> {job.type}
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
-                                    <Clock size={16} className="text-amber-500" />
-                                    <span className="font-bold text-gray-700">Salary:</span> {job.salaryRange}
-                                </div>
-                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
-                                    <Star size={16} className="text-purple-500" />
-                                    <span className="font-bold text-gray-700">Experience:</span> {job.experience || 'Not specified'}
-                                </div>
-                                <p className="text-xs text-gray-500 leading-relaxed mt-4 line-clamp-3">
-                                    {job.shortDescription || job.description}
-                                </p>
-                            </div>
-
-                            <div className="flex gap-2 pt-4 border-t border-gray-50">
-                                <button
-                                    onClick={() => setSelectedJob(job)}
-                                    className="flex-1 px-4 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-all border border-gray-200 text-sm"
-                                >
-                                    View Details
-                                </button>
-                                <button
-                                    onClick={() => setApplyingJob(job)}
-                                    className="flex-1 px-4 py-2.5 bg-[#00703C] text-white rounded-xl font-black text-sm shadow-md hover:shadow-lg hover:shadow-emerald-200 transition-all flex items-center justify-center gap-2 group/btn"
-                                >
-                                    Apply <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
-                                </button>
-                            </div>
+                            <button
+                                onClick={() => setApplyingJob(job)}
+                                className="w-full py-3 bg-[#00703C] text-white rounded-xl font-bold hover:bg-[#005c30] transition-colors shadow-md"
+                            >
+                                Apply Now
+                            </button>
                         </div>
                     ))}
                 </div>

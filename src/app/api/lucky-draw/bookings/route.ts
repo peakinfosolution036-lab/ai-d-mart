@@ -11,9 +11,12 @@ export async function POST(request: NextRequest) {
             isFreeRequest, participantName, participantMobile, participantAddress, participantEmail, participantPhoto
         } = await request.json();
 
-        if (!productId || !userId || !numbers || !Array.isArray(numbers)) {
+        if (!productId || !numbers || !Array.isArray(numbers)) {
             return NextResponse.json({ success: false, error: 'Missing required fields' }, { status: 400 });
         }
+
+        // Handle Guest Users by assigning a generic ID (fallback)
+        const effectiveUserId = userId || `GUEST_${Math.random().toString(36).substring(7)}`;
 
         // Validate Mobile Number if provided (Indian format generally)
         if (participantMobile && !/^[6-9]\d{9}$/.test(participantMobile)) {
@@ -82,7 +85,7 @@ export async function POST(request: NextRequest) {
         const booking = {
             id: bookingId,
             productId,
-            userId,
+            userId: effectiveUserId,
             userName, // Logged in user name
             participantName: participantName || userName, // Support family entry name
             participantMobile: participantMobile || '',    // Support family entry mobile
@@ -104,6 +107,9 @@ export async function POST(request: NextRequest) {
         // WALLET DEDUCTION
         // ------------------
         if (paymentId === 'wallet' && !isFreeRequest && totalAmount > 0) {
+            if (!userId) {
+                return NextResponse.json({ success: false, error: 'Must be logged in to use wallet balance.' }, { status: 401 });
+            }
             const walletTypes = ['MAIN', 'REFERRAL', 'SHOPPING', 'EVENT'];
             const wallets = [];
             let totalBalance = 0;
@@ -186,7 +192,7 @@ export async function POST(request: NextRequest) {
             transactItems.push({
                 Put: {
                     TableName: 'LuckyDrawProfiles',
-                    Item: { userId, freeChanceUsed: true }
+                    Item: { userId: effectiveUserId, freeChanceUsed: true }
                 }
             });
         }
