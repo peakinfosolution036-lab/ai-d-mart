@@ -495,3 +495,59 @@ export async function sendLuckyDrawConfirmationEmail({
 
     return sendEmail({ to: email, subject, htmlBody, attachments });
 }
+
+
+export interface WelcomeEmailParams {
+    name: string;
+    email: string;
+}
+
+export async function sendWelcomeEmail({ name, email }: WelcomeEmailParams) {
+    const subject = `Welcome to AI D-Mart! 🎉 Complete Your Profile to Start Earning`;
+
+    const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; margin: 0; padding: 0; background-color: #f4f4f5; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #fff; }
+        .header { background: linear-gradient(135deg, #00703C 0%, #009951 100%); padding: 40px 30px; text-align: center; color: #fff; }
+        .content { padding: 40px 30px; }
+        .greeting { font-size: 20px; font-weight: 700; color: #1e293b; margin-bottom: 20px; }
+        .feature-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 20px; margin: 20px 0; border-radius: 12px; }
+        .feature-title { font-weight: 700; color: #00703C; font-size: 16px; margin-bottom: 8px; }
+        .footer { background: #1e293b; padding: 30px; text-align: center; color: #94a3b8; font-size: 13px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0;">Welcome to AI D-Mart! 🚀</h1>
+        </div>
+        <div class="content">
+            <div class="greeting">Hi ${name},</div>
+            <p>We are thrilled to have you! Your account is created.</p>
+            
+            <div class="feature-box">
+                <div class="feature-title">💳 Digital Wallet</div>
+                <p style="margin:0;font-size:14px;color:#475569;">Track your funds and easily pay.</p>
+            </div>
+            
+            <div class="feature-box">
+                <div class="feature-title">🍀 Weekly Lucky Draws</div>
+                <p style="margin:0;font-size:14px;color:#475569;">Participate to win massive prizes.</p>
+            </div>
+        </div>
+        <div class="footer">
+            <p>© ${new Date().getFullYear()} AI D-Mart. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
+    `;
+
+    return sendEmail({ to: email, subject, htmlBody });
+}

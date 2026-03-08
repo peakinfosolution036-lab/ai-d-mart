@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminDisableUser, adminEnableUser, adminDeleteUser } from '@/lib/cognito';
-import { getUsersByRole, updateUserStatus, getUserById, deleteUser } from '@/lib/dynamodb';
+import { getUsersByRole, updateUserStatus, getUserById, deleteUser, notifications } from '@/lib/dynamodb';
 import { verifyAdminAccess } from '@/lib/admin-auth';
 import { ApiResponse } from '@/types';
 
@@ -141,6 +141,20 @@ export async function PATCH(request: NextRequest) {
                 console.error('Failed to update Cognito user status:', error);
                 // Continue anyway - DynamoDB status is updated
             }
+        }
+
+        // Send activation notification
+        if (status === 'ACTIVE') {
+            const notifId = `notif_${Date.now()}_${customerId}`;
+            await notifications.create(notifId, {
+                id: notifId,
+                userId: customerId,
+                title: 'Account Activated 🎉',
+                message: 'Your account has been verified and activated by the administrator. You now have full access to our platform features.',
+                type: 'system',
+                isRead: false,
+                createdAt: new Date().toISOString()
+            });
         }
 
         return NextResponse.json<ApiResponse>({

@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
     Briefcase, MapPin, Building2, Clock, Search, Filter,
-    ArrowRight, Globe, Home, ChevronRight, X, AlertCircle
+    ArrowRight, Globe, Home, ChevronRight, X, AlertCircle, Star
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import JobApplicationForm from './JobApplicationForm';
@@ -21,6 +21,7 @@ interface Job {
     responsibilities?: string[];
     benefits?: string[];
     requirements?: string[];
+    experience?: string;
     createdAt: string;
 }
 
@@ -30,6 +31,9 @@ export default function JobsListing() {
     const [loading, setLoading] = useState(true);
     const [source, setSource] = useState<'internal' | 'external'>('internal');
     const [search, setSearch] = useState('');
+    const [filterLocation, setFilterLocation] = useState('');
+    const [filterType, setFilterType] = useState('');
+    const [filterSalary, setFilterSalary] = useState('');
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
     const [applyingJob, setApplyingJob] = useState<Job | null>(null);
 
@@ -50,11 +54,18 @@ export default function JobsListing() {
         }
     };
 
-    const filteredJobs = jobs.filter(j =>
-        j.title.toLowerCase().includes(search.toLowerCase()) ||
-        j.location.toLowerCase().includes(search.toLowerCase()) ||
-        j.company.toLowerCase().includes(search.toLowerCase())
-    );
+    const filteredJobs = jobs.filter(j => {
+        const matchesSearch = j.title.toLowerCase().includes(search.toLowerCase()) ||
+            j.company.toLowerCase().includes(search.toLowerCase());
+        const matchesLocation = filterLocation ? j.location.toLowerCase().includes(filterLocation.toLowerCase()) : true;
+        const matchesType = filterType ? j.type.toLowerCase().includes(filterType.toLowerCase()) : true;
+        const matchesSalary = filterSalary ? j.salaryRange.includes(filterSalary) : true;
+        return matchesSearch && matchesLocation && matchesType && matchesSalary;
+    });
+
+    const uniqueLocations = Array.from(new Set(jobs.map(j => j.location))).filter(Boolean);
+    const uniqueTypes = Array.from(new Set(jobs.map(j => j.type))).filter(Boolean);
+    const uniqueSalaries = Array.from(new Set(jobs.map(j => j.salaryRange))).filter(Boolean);
 
     return (
         <div className="max-w-6xl mx-auto px-4 py-10">
@@ -69,8 +80,8 @@ export default function JobsListing() {
                     <button
                         onClick={() => setSource('internal')}
                         className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-sm transition-all ${source === 'internal'
-                                ? 'bg-white text-emerald-700 shadow-sm ring-1 ring-gray-200'
-                                : 'text-gray-500 hover:text-gray-700'
+                            ? 'bg-white text-emerald-700 shadow-sm ring-1 ring-gray-200'
+                            : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         <Home size={18} /> Internal Jobs
@@ -78,8 +89,8 @@ export default function JobsListing() {
                     <button
                         onClick={() => setSource('external')}
                         className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-black text-sm transition-all ${source === 'external'
-                                ? 'bg-white text-emerald-700 shadow-sm ring-1 ring-gray-200'
-                                : 'text-gray-500 hover:text-gray-700'
+                            ? 'bg-white text-emerald-700 shadow-sm ring-1 ring-gray-200'
+                            : 'text-gray-500 hover:text-gray-700'
                             }`}
                     >
                         <Globe size={18} /> External Jobs
@@ -87,22 +98,55 @@ export default function JobsListing() {
                 </div>
             </div>
 
-            {/* Search & Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                <div className="md:col-span-3 relative group">
-                    <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
-                    <input
-                        type="text"
-                        placeholder="Search by title, company, or location..."
-                        value={search}
-                        onChange={e => setSearch(e.target.value)}
-                        className="w-full pl-12 pr-4 py-4 bg-white border border-gray-200 rounded-2xl shadow-sm focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium"
-                    />
+            {/* Search & Filters */}
+            <div className="bg-white p-6 rounded-3xl border border-gray-200 shadow-sm mb-10 space-y-4">
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative group">
+                        <Search size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-emerald-500 transition-colors" />
+                        <input
+                            type="text"
+                            placeholder="Search by job title or company..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium"
+                        />
+                    </div>
+                    <div className="md:w-1/4 relative">
+                        <select
+                            value={filterLocation} onChange={e => setFilterLocation(e.target.value)}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium appearance-none text-gray-600"
+                        >
+                            <option value="">All Locations</option>
+                            {uniqueLocations.map(loc => <option key={loc} value={loc}>{loc}</option>)}
+                        </select>
+                        <Filter size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
                 </div>
-                <div className="flex items-center justify-center gap-2 bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
-                    <Briefcase className="text-emerald-600" size={20} />
-                    <span className="font-black text-emerald-800 text-xl">{filteredJobs.length}</span>
-                    <span className="text-emerald-600 text-sm font-bold uppercase tracking-wider">Jobs Found</span>
+                <div className="flex flex-col md:flex-row gap-4">
+                    <div className="flex-1 relative">
+                        <select
+                            value={filterType} onChange={e => setFilterType(e.target.value)}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium appearance-none text-gray-600"
+                        >
+                            <option value="">All Job Types</option>
+                            {uniqueTypes.map(type => <option key={type} value={type}>{type}</option>)}
+                        </select>
+                        <Filter size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                    <div className="flex-1 relative">
+                        <select
+                            value={filterSalary} onChange={e => setFilterSalary(e.target.value)}
+                            className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium appearance-none text-gray-600"
+                        >
+                            <option value="">Any Salary Range</option>
+                            {uniqueSalaries.map(sal => <option key={sal} value={sal}>{sal}</option>)}
+                        </select>
+                        <Filter size={16} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    </div>
+                    <div className="md:w-[200px] flex items-center justify-center gap-2 bg-emerald-50 border border-emerald-100 rounded-xl p-3">
+                        <span className="font-black text-emerald-800 text-lg">{filteredJobs.length}</span>
+                        <span className="text-emerald-600 text-xs font-bold uppercase tracking-wider">Jobs Found</span>
+                    </div>
                 </div>
             </div>
 
@@ -134,10 +178,20 @@ export default function JobsListing() {
 
                             <div className="space-y-2 mb-6 flex-1">
                                 <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
-                                    <MapPin size={16} /> {job.location}
+                                    <MapPin size={16} className="text-emerald-500" />
+                                    <span className="font-bold text-gray-700">Location:</span> {job.location}
                                 </div>
-                                <div className="flex items-center gap-2 text-emerald-600 text-sm font-bold">
-                                    <Clock size={16} /> {job.salaryRange}
+                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
+                                    <Briefcase size={16} className="text-blue-500" />
+                                    <span className="font-bold text-gray-700">Type:</span> {job.type}
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
+                                    <Clock size={16} className="text-amber-500" />
+                                    <span className="font-bold text-gray-700">Salary:</span> {job.salaryRange}
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
+                                    <Star size={16} className="text-purple-500" />
+                                    <span className="font-bold text-gray-700">Experience:</span> {job.experience || 'Not specified'}
                                 </div>
                                 <p className="text-xs text-gray-500 leading-relaxed mt-4 line-clamp-3">
                                     {job.shortDescription || job.description}

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { Crown, Wallet, Users, Gift, Award, TrendingUp, Download, Copy, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { Toast, ToastType } from '@/components/ui/Toast';
+import WithdrawWalletModal from '@/components/WithdrawWalletModal';
 
 interface PrimeDashboardProps {
     className?: string;
@@ -16,6 +18,20 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
     const [activeTab, setActiveTab] = useState('overview');
     const [showReferralCode, setShowReferralCode] = useState(false);
 
+    // Withdraw Modal State
+    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+    const [withdrawWalletBalance, setWithdrawWalletBalance] = useState(0);
+
+    const [toast, setToast] = useState<{ message: string, type: ToastType, isVisible: boolean }>({
+        message: '',
+        type: 'info',
+        isVisible: false
+    });
+
+    const showToast = (message: string, type: ToastType = 'info') => {
+        setToast({ message, type, isVisible: true });
+    };
+
     useEffect(() => {
         if (isLoggedIn && user?.id) {
             fetchPrimeData();
@@ -26,7 +42,7 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
         try {
             const response = await fetch(`/api/prime/membership?userId=${user?.id}`);
             const result = await response.json();
-            
+
             if (result.success && result.data.isPrimeMember) {
                 setPrimeData(result.data.membership);
                 setWallets(result.data.wallets);
@@ -90,13 +106,13 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
         return null; // Don't show dashboard if not a Prime member
     }
 
-    const totalEarnings = (wallets?.referral?.totalEarned || 0) + 
-                         (wallets?.shopping?.totalEarned || 0) + 
-                         (wallets?.event?.totalEarned || 0);
+    const totalEarnings = (wallets?.referral?.totalEarned || 0) +
+        (wallets?.shopping?.totalEarned || 0) +
+        (wallets?.event?.totalEarned || 0);
 
-    const totalBalance = (wallets?.referral?.balance || 0) + 
-                        (wallets?.shopping?.balance || 0) + 
-                        (wallets?.event?.balance || 0);
+    const totalBalance = (wallets?.referral?.balance || 0) +
+        (wallets?.shopping?.balance || 0) +
+        (wallets?.event?.balance || 0);
 
     return (
         <div className={`bg-gradient-to-br from-yellow-50 to-orange-50 rounded-2xl shadow-lg overflow-hidden ${className}`}>
@@ -129,11 +145,10 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${
-                                activeTab === tab.id
-                                    ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
-                                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                            }`}
+                            className={`flex items-center gap-2 px-6 py-4 font-medium transition-colors ${activeTab === tab.id
+                                ? 'text-orange-600 border-b-2 border-orange-600 bg-orange-50'
+                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                                }`}
                         >
                             <tab.icon size={20} />
                             {tab.label}
@@ -268,7 +283,13 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
                                         <span className="font-medium">₹{wallets?.referral?.totalWithdrawn || 0}</span>
                                     </div>
                                 </div>
-                                <button className="w-full mt-4 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors">
+                                <button
+                                    onClick={() => {
+                                        setWithdrawWalletBalance(wallets?.referral?.balance || 0);
+                                        setShowWithdrawModal(true);
+                                    }}
+                                    className="w-full mt-4 bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+                                >
                                     Withdraw
                                 </button>
                             </div>
@@ -365,7 +386,7 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
                     <div className="space-y-6">
                         <div className="bg-white rounded-xl p-6 border border-gray-200">
                             <h3 className="text-lg font-bold text-gray-900 mb-4">Available Rewards</h3>
-                            
+
                             {/* Mega Event Pass */}
                             <div className="border border-gray-200 rounded-lg p-4 mb-4">
                                 <div className="flex items-center justify-between">
@@ -392,6 +413,23 @@ const PrimeDashboard: React.FC<PrimeDashboardProps> = ({ className = '' }) => {
                     </div>
                 )}
             </div>
+
+            <WithdrawWalletModal
+                isOpen={showWithdrawModal}
+                onClose={() => setShowWithdrawModal(false)}
+                walletBalance={withdrawWalletBalance}
+                userId={user?.id || ''}
+                onSuccess={(msg: string) => showToast(msg, 'success')}
+                onError={(msg: string) => showToast(msg, 'error')}
+            />
+            {toast.isVisible && (
+                <Toast
+                    message={toast.message}
+                    type={toast.type}
+                    isVisible={toast.isVisible}
+                    onClose={() => setToast({ ...toast, isVisible: false })}
+                />
+            )}
         </div>
     );
 };

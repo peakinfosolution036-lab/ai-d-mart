@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { QueryCommand, ScanCommand, TransactWriteCommand } from '@aws-sdk/lib-dynamodb';
+import { QueryCommand, ScanCommand, TransactWriteCommand, GetCommand, UpdateCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { docClient } from '@/lib/dynamodb';
 import { v4 as uuidv4 } from 'uuid';
 import { sendLuckyDrawConfirmationEmail } from '@/lib/email-resend';
@@ -97,6 +97,69 @@ export async function POST(request: NextRequest) {
             seasonId: product.seasonId,
             drawType: product.drawType
         };
+
+        const timestamp = new Date().toISOString();
+
+        // ------------------
+        // WALLET DEDUCTION
+        // ------------------
+        if (paymentId === 'wallet' && !isFreeRequest && totalAmount > 0) {
+            const walletTypes = ['MAIN', 'REFERRAL', 'SHOPPING', 'EVENT'];
+            const wallets = [];
+            let totalBalance = 0;
+
+            for (const wt of walletTypes) {
+                const wRes = await docClient.send(new GetCommand({
+                    TableName: 'ai-d-mart-wallets',
+                    Key: { PK: `USER#${userId}`, SK: `WALLET#${wt}` }
+                }));
+                const balance = wRes.Item?.balance || 0;
+                if (balance > 0) {
+                    wallets.push({ type: wt, balance });
+                    totalBalance += balance;
+                }
+            }
+
+            if (totalBalance < totalAmount) {
+                return NextResponse.json({ success: false, error: 'Insufficient wallet balance.' }, { status: 400 });
+            }
+
+            // Deduct from Wallets sequentially
+            let remainingToDeduct = totalAmount;
+            for (const wallet of wallets) {
+                if (remainingToDeduct <= 0) break;
+                const toDeduct = Math.min(wallet.balance, remainingToDeduct);
+
+                await docClient.send(new UpdateCommand({
+                    TableName: 'ai-d-mart-wallets',
+                    Key: { PK: `USER#${userId}`, SK: `WALLET#${wallet.type}` },
+                    UpdateExpression: 'SET balance = balance - :amount, updatedAt = :updatedAt',
+                    ExpressionAttributeValues: {
+                        ':amount': toDeduct,
+                        ':updatedAt': timestamp
+                    }
+                }));
+
+                // Record transaction
+                const txId = uuidv4();
+                await docClient.send(new PutCommand({
+                    TableName: 'ai-d-mart-wallets',
+                    Item: {
+                        PK: `USER#${userId}`,
+                        SK: `TRANSACTION#${txId}`,
+                        transactionId: txId,
+                        walletType: wallet.type,
+                        type: 'LUCKY_DRAW_ENTRY',
+                        amount: -toDeduct,
+                        description: `Lucky Draw Ticket ${bookingId}`,
+                        status: 'COMPLETED',
+                        createdAt: timestamp
+                    }
+                }));
+
+                remainingToDeduct -= toDeduct;
+            }
+        }
 
         // Transaction for Atomicity
         // Use a more robust cycle ID including season and draw end

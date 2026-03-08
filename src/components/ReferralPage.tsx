@@ -5,8 +5,9 @@ import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import {
     Crown, Users, Wallet, Gift, Star, Copy, CheckCircle, TrendingUp, ShoppingCart,
-    Calendar, Trophy, ArrowRight, Share2, ExternalLink, Zap, Lock, Sparkles
+    Calendar, Trophy, ArrowRight, Share2, ExternalLink, Zap, Lock, Sparkles, AlertCircle
 } from 'lucide-react';
+import WithdrawWalletModal from '@/components/WithdrawWalletModal';
 
 interface ReferralData {
     points: { totalPoints: number; availablePoints: number; convertedPoints: number };
@@ -36,6 +37,7 @@ export default function ReferralPage() {
     const [copied, setCopied] = useState(false);
     const [showPayment, setShowPayment] = useState(false);
     const [purchasingPrime, setPurchasingPrime] = useState(false);
+    const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
     const referralCode = (user as any)?.referralCode || (user as any)?.primeCode || '';
     const referralLink = typeof window !== 'undefined'
@@ -229,6 +231,14 @@ export default function ReferralPage() {
                                         </div>
                                         <p className="text-xl font-black text-gray-800">{c.value}</p>
                                         <p className="text-xs text-gray-500">{c.label}</p>
+                                        {c.label === 'Wallet Balance' && (
+                                            <button
+                                                onClick={() => setShowWithdrawModal(true)}
+                                                className="mt-2 w-full bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-xs font-bold py-1.5 rounded-md transition-colors"
+                                            >
+                                                Withdraw
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
                             </div>
@@ -380,6 +390,18 @@ export default function ReferralPage() {
                     </div>
                 </div>
             )}
+
+            <WithdrawWalletModal
+                isOpen={showWithdrawModal}
+                onClose={() => setShowWithdrawModal(false)}
+                walletBalance={data?.totalWalletBalance || 0}
+                userId={user?.id || ''}
+                onSuccess={(msg) => {
+                    alert(msg);
+                    fetchData();
+                }}
+                onError={(msg) => alert(msg)}
+            />
         </div>
     );
 }

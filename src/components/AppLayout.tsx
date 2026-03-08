@@ -7,6 +7,7 @@ import { Menu, LogOut, Home, Info, User, X, ChevronRight, Shield, Briefcase, Tro
 import { useAuth } from '@/context/AuthContext';
 import { APP_NAME } from '@/constants';
 import MobileBottomNav from './MobileBottomNav';
+import NotificationDropdown from './NotificationDropdown';
 
 export const AppLayout = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
@@ -99,6 +100,9 @@ export const AppLayout = ({ children }: { children: React.ReactNode }) => {
                                     >
                                         Dashboard
                                     </Link>
+                                    <div className="flex items-center ml-2 mr-2">
+                                        <NotificationDropdown theme="dark" />
+                                    </div>
                                     <button
                                         onClick={handleLogout}
                                         className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 xl:px-6 xl:py-3 rounded-full font-bold transition-all text-xs xl:text-sm uppercase tracking-wider"

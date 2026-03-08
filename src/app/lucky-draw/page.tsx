@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Play, Calendar, Clock, Trophy, Star, CheckCircle, Smartphone, Globe, Gift, Menu, X, Instagram, Facebook, Twitter, Youtube, Phone, Mail, Award, ArrowRight, Upload, Info, LogIn } from 'lucide-react';
 import { motion } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import UpiPayment from '@/components/UpiPayment';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
@@ -79,6 +80,7 @@ export default function LuckyDrawPage() {
     const [participantPhoto, setParticipantPhoto] = useState<string | null>(null);
     const [agreeToTerms, setAgreeToTerms] = useState(false);
     const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+    const [lastTransactionId, setLastTransactionId] = useState<string>('');
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Timer
@@ -96,6 +98,17 @@ export default function LuckyDrawPage() {
         fetchDrawSchedule();
         fetchSeasons();
     }, []);
+
+    useEffect(() => {
+        if (showSuccessPopup) {
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#FFD700', '#00703C', '#D32F2F', '#4285F4', '#9C27B0']
+            });
+        }
+    }, [showSuccessPopup]);
 
     const fetchSeasons = async () => {
         try {
@@ -261,6 +274,7 @@ export default function LuckyDrawPage() {
                 // Mock dispatch logic
                 console.log('Dispatching Confirmation Email to:', participantEmail);
 
+                setLastTransactionId(isFreeTransaction ? 'FREE_ENTRY' : (paymentId || data.data?.id || 'TXN123456'));
                 setShowCheckout(false);
                 setShowRules(false);
                 setShowSuccessPopup(true);
@@ -819,7 +833,7 @@ export default function LuckyDrawPage() {
                             <h3 className="text-2xl font-black text-gray-900">Rules & Regulations</h3>
                         </div>
 
-                        <div className="space-y-4 text-sm text-gray-600 mb-8 max-h-60 overflow-y-auto pr-2">
+                        <div className="space-y-4 text-sm text-gray-600 mb-6 max-h-60 overflow-y-auto pr-2">
                             <p>1. Participants must be 18 years or older.</p>
                             <p>2. Winners are selected randomly via automated system.</p>
                             <p>3. Prizes must be claimed within 30 days of the draw.</p>
@@ -827,6 +841,23 @@ export default function LuckyDrawPage() {
                             <p>5. Multiple entries are allowed via paid tickets.</p>
                             <p className="font-bold text-gray-900">By proceeding, you agree to these terms.</p>
                         </div>
+
+                        {calculateTotal() > 0 && selectedNumbers.length > 0 && (
+                            <div className="mb-6">
+                                <label className="block text-sm font-bold text-gray-700 mb-2">Select Payment Method</label>
+                                <select
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-xl outline-none focus:border-[#00703C]"
+                                    onChange={(e) => {
+                                        // Store selected payment method temporarily in a data attribute or state. 
+                                        // Here we just use an inline click handler override later.
+                                    }}
+                                    id="paymentMethodSelect"
+                                >
+                                    <option value="wallet">Wallet Balance</option>
+                                    <option value="upi">UPI Payment</option>
+                                </select>
+                            </div>
+                        )}
 
                         <div className="flex gap-4">
                             <button onClick={() => setShowRules(false)} className="flex-1 py-3 text-gray-500 font-bold hover:bg-gray-100 rounded-xl transition-colors">
@@ -837,7 +868,15 @@ export default function LuckyDrawPage() {
                                     Get Free Ticket
                                 </button>
                             ) : (
-                                <button onClick={() => setShowCheckout(true)} className="flex-1 py-3 bg-[#00703C] text-white font-bold rounded-xl hover:bg-[#005c30] transition-colors shadow-lg">
+                                <button onClick={() => {
+                                    const selectEl = document.getElementById('paymentMethodSelect') as HTMLSelectElement;
+                                    const method = selectEl ? selectEl.value : 'wallet';
+                                    if (method === 'wallet') {
+                                        handleBooking('wallet');
+                                    } else {
+                                        setShowCheckout(true);
+                                    }
+                                }} className="flex-1 py-3 bg-[#00703C] text-white font-bold rounded-xl hover:bg-[#005c30] transition-colors shadow-lg">
                                     Proceed to Pay ₹{calculateTotal()}
                                 </button>
                             )}
@@ -879,29 +918,6 @@ export default function LuckyDrawPage() {
             {showSuccessPopup && (
                 <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-4 z-[200] backdrop-blur-md">
                     <div className="bg-white rounded-3xl p-8 w-full max-w-md relative z-10 text-center shadow-2xl overflow-hidden">
-                        {/* Framer Motion Confetti Effect */}
-                        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
-                            {Array.from({ length: 50 }).map((_, i) => (
-                                <motion.div key={i} className="absolute w-3 h-3 rounded-sm"
-                                    style={{
-                                        left: `${Math.random() * 100}%`,
-                                        top: `-10%`,
-                                        backgroundColor: ['#FFD700', '#00703C', '#D32F2F', '#4285F4', '#9C27B0'][Math.floor(Math.random() * 5)],
-                                    }}
-                                    animate={{
-                                        y: [0, 500],
-                                        x: [0, (Math.random() - 0.5) * 200],
-                                        rotate: [0, 360 * Math.random()],
-                                        opacity: [1, 1, 0]
-                                    }}
-                                    transition={{
-                                        duration: 2 + Math.random() * 2,
-                                        repeat: Infinity,
-                                        delay: Math.random() * 2
-                                    }}
-                                />
-                            ))}
-                        </div>
 
                         <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner animate-bounce">
                             <CheckCircle size={48} />
@@ -922,6 +938,14 @@ export default function LuckyDrawPage() {
                             <div className="flex justify-between border-b pb-2 mb-2">
                                 <span className="text-gray-500 font-bold text-sm">Lucky Number(s)</span>
                                 <span className="font-black text-[#00703C] text-sm">{selectedNumbers.join(', ')} ({selectedNumbers.length} Tickets)</span>
+                            </div>
+                            <div className="flex justify-between border-b pb-2 mb-2">
+                                <span className="text-gray-500 font-bold text-sm">Transaction ID</span>
+                                <span className="font-bold text-gray-900 text-sm uppercase">{lastTransactionId}</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-gray-500 font-bold text-sm">Date & Time</span>
+                                <span className="font-bold text-gray-900 text-sm">{new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })}</span>
                             </div>
                         </div>
 

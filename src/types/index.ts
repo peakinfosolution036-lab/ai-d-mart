@@ -42,6 +42,7 @@ export interface CustomerUser extends BaseUser {
     pinCode: string;
     inviteCode?: string;
     referredBy?: string;
+    referrals?: string[];
     status: UserStatus;
     walletBalance: number;
     kycVerified: boolean;

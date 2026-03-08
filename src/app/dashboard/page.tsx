@@ -37,6 +37,7 @@ const menuItems = [
     { id: 'settings', label: 'Settings', icon: Settings },
 ];
 
+import NotificationDropdown from '@/components/NotificationDropdown';
 
 export default function CustomerDashboard() {
     const router = useRouter();
@@ -1187,6 +1188,87 @@ export default function CustomerDashboard() {
                                         <span className="font-bold text-slate-900 block group-hover:text-blue-600 transition-colors">{action.label}</span>
                                     </button>
                                 ))}
+                            </div>
+                        </div>
+
+                        {/* Summary Stats */}
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <Activity className="text-blue-600" /> At a Glance
+                            </h3>
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center">
+                                            <Wallet size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Wallet Balance</p>
+                                            <h4 className="text-2xl font-black text-slate-900">₹{(customer?.walletBalance || 0).toLocaleString()}</h4>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setActiveTab('wallet')} className="text-emerald-600 text-sm font-bold flex items-center gap-1 hover:underline">Manage Wallet <ChevronRight size={16} /></button>
+                                </div>
+                                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center">
+                                            <Trophy size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Lucky Draw Entries</p>
+                                            <h4 className="text-2xl font-black text-slate-900">{dashboardData.luckyDrawEntries?.length || 0}</h4>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setActiveTab('lucky-draw')} className="text-amber-600 text-sm font-bold flex items-center gap-1 hover:underline">View Entries <ChevronRight size={16} /></button>
+                                </div>
+                                <div className="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] transition-shadow">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center">
+                                            <Users size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-bold text-slate-400 uppercase tracking-wider">Total Referrals</p>
+                                            <h4 className="text-2xl font-black text-slate-900">{customer?.referrals?.length || 0}</h4>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setActiveTab('referrals')} className="text-purple-600 text-sm font-bold flex items-center gap-1 hover:underline">Invite Friends <ChevronRight size={16} /></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Recent Activity */}
+                        <div>
+                            <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                                <Clock className="text-blue-600" /> Recent Activity
+                            </h3>
+                            <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                                <div className="divide-y divide-slate-50">
+                                    {dashboardData.transactions && dashboardData.transactions.length > 0 ? (
+                                        dashboardData.transactions.slice(0, 3).map((txn: any) => (
+                                            <div key={txn.id} className="p-6 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                                                <div className="flex items-center gap-4">
+                                                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${txn.type === 'credit' ? 'bg-emerald-50 text-emerald-600' : 'bg-rose-50 text-rose-600'}`}>
+                                                        {txn.type === 'credit' ? <ArrowUpRight size={20} /> : <ArrowUpRight size={20} className="rotate-180" />}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-bold text-slate-900">{txn.description}</p>
+                                                        <p className="text-xs text-slate-500">{new Date(txn.createdAt).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className={`font-black ${txn.type === 'credit' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                        {txn.type === 'credit' ? '+' : '-'}₹{txn.amount}
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="p-12 text-center">
+                                            <Activity className="mx-auto text-slate-300 mb-3" size={32} />
+                                            <p className="text-slate-500 font-medium">No recent activity found.</p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2921,17 +3003,7 @@ export default function CustomerDashboard() {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setActiveTab('notifications')}
-                            className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center text-slate-600 border border-slate-100 shadow-sm hover:shadow-md transition-all relative"
-                        >
-                            <Bell size={20} />
-                            {filteredNotifications.filter((n: any) => !n.read).length > 0 && (
-                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full border-2 border-white text-[10px] font-black text-white flex items-center justify-center shadow-lg shadow-red-500/20">
-                                    {filteredNotifications.filter((n: any) => !n.read).length}
-                                </span>
-                            )}
-                        </button>
+                        <NotificationDropdown theme="light" />
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
                             <div className="text-right hidden md:block">
                                 <p className="text-sm font-bold text-slate-900">{customer?.fullName || user?.name}</p>

@@ -334,8 +334,8 @@ const Shop = () => {
                                     key={category}
                                     onClick={() => setSelectedCategory(category)}
                                     className={`px-6 py-2 rounded-full font-bold whitespace-nowrap transition-all ${selectedCategory === category
-                                            ? 'bg-[#00703C] text-white shadow-md'
-                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        ? 'bg-[#00703C] text-white shadow-md'
+                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                         }`}
                                 >
                                     {category}
@@ -359,73 +359,117 @@ const Shop = () => {
                                 Clear Filters
                             </button>
                         </div>
-                    ) : filteredProducts.map((product) => (
-                        <div key={product.id} className="group bg-white rounded-2xl sm:rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden hover:scale-105 hover:-translate-y-2 border border-[#00703C]/10">
-                            <div className="aspect-square overflow-hidden relative bg-gray-100">
-                                {product.image ? (
-                                    <Image
-                                        src={product.image}
-                                        alt={product.name}
-                                        fill
-                                        className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                        quality={100}
-                                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = 'none';
-                                            const parent = e.currentTarget.parentElement;
-                                            if (parent) {
-                                                parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-[#00703C]/30"><span class="text-4xl">📦</span></div>';
-                                            }
-                                        }}
-                                    />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-[#00703C]/30">
-                                        <span className="text-4xl">📦</span>
+                    ) : filteredProducts.map((product) => {
+                        const originalPrice = Math.round(product.price * 1.25); // Fake 20% discount
+                        const savings = originalPrice - product.price;
+
+                        return (
+                            <div key={product.id} className="group flex flex-col bg-white rounded-3xl shadow-sm hover:shadow-2xl transition-all duration-500 overflow-hidden hover:-translate-y-2 border border-gray-100">
+                                {/* Image Container with Hover Actions */}
+                                <div className="aspect-[4/3] sm:aspect-square overflow-hidden relative bg-gray-50 flex-shrink-0">
+                                    {/* Discount Badge */}
+                                    <div className="absolute top-4 left-4 z-20 bg-red-500 text-white text-xs font-black uppercase tracking-wider px-3 py-1 rounded-full shadow-md">
+                                        20% OFF
                                     </div>
-                                )}
-                                <div className="absolute inset-0 bg-gradient-to-t from-[#004D2C]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                            </div>
 
-                            <div className="p-4 sm:p-6">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-xs sm:text-sm font-bold text-[#00703C] bg-[#F0FDF4] px-2 sm:px-3 py-1 rounded-full border border-[#00703C]/20">
-                                        {product.category}
-                                    </span>
+                                    {product.image ? (
+                                        <Image
+                                            src={product.image}
+                                            alt={product.name}
+                                            fill
+                                            className="object-cover group-hover:scale-110 transition-transform duration-700 pointer-events-none"
+                                            quality={100}
+                                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                                            onError={(e) => {
+                                                e.currentTarget.style.display = 'none';
+                                                const parent = e.currentTarget.parentElement;
+                                                if (parent) {
+                                                    parent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-[#00703C]/30"><span class="text-4xl">📦</span></div>';
+                                                }
+                                            }}
+                                        />
+                                    ) : (
+                                        <div className="w-full h-full flex items-center justify-center text-[#00703C]/30 bg-gray-100">
+                                            <span className="text-4xl">📦</span>
+                                        </div>
+                                    )}
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"></div>
+
+                                    {/* Quick Actions (Visible on Hover) */}
+                                    <div className="absolute inset-0 z-20 px-6 pb-6 flex items-end justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0">
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                addToCart(product.id);
+                                            }}
+                                            className="w-full bg-[#00703C]/90 backdrop-blur-md text-white py-3 rounded-2xl font-black text-sm hover:bg-[#00703C] transition-colors shadow-xl flex items-center justify-center gap-2 transform active:scale-95"
+                                        >
+                                            <ShoppingCart size={18} /> Quick Add
+                                        </button>
+                                    </div>
                                 </div>
 
-                                <h3 className="text-lg sm:text-xl font-bold text-[#004D2C] mb-2 group-hover:text-[#00703C] transition-colors line-clamp-2">
-                                    {product.name}
-                                </h3>
+                                <div className="p-5 flex flex-col flex-1">
+                                    <div className="flex items-center justify-between mb-3">
+                                        <span className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-[#00703C] bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                                            {product.category}
+                                        </span>
+                                        <div className="flex items-center gap-1 text-amber-500">
+                                            <Star size={14} fill="currentColor" />
+                                            <span className="text-xs font-bold text-gray-700">4.8</span>
+                                        </div>
+                                    </div>
 
-                                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-                                    {product.description || 'No description available'}
-                                </p>
+                                    <h3 className="text-lg font-black text-gray-900 mb-2 group-hover:text-[#00703C] transition-colors line-clamp-2">
+                                        {product.name}
+                                    </h3>
 
-                                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                                    <span className="text-xl sm:text-2xl font-black text-[#00703C]">
-                                        ₹{product.price}
-                                    </span>
-                                    <button
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            console.log('Adding to cart:', product.id);
-                                            addToCart(product.id);
-                                        }}
-                                        className="w-full sm:w-auto bg-[#FFD700] text-[#004D2C] px-4 sm:px-6 py-2 sm:py-3 rounded-full font-bold hover:shadow-lg hover:bg-[#F0C000] transition-all duration-300 flex items-center justify-center gap-2 group/btn text-sm sm:text-base border-2 border-transparent hover:border-[#004D2C]/10"
-                                    >
-                                        <ShoppingCart size={16} className="sm:w-5 sm:h-5" />
-                                        <span className="hidden sm:inline">Add to Cart</span>
-                                        <span className="sm:hidden">Add</span>
-                                        {cart[product.id] && (
-                                            <span className="bg-[#004D2C] text-[#FFD700] rounded-full px-2 py-1 text-xs font-bold ml-1">
-                                                {cart[product.id]}
-                                            </span>
-                                        )}
-                                    </button>
+                                    <p className="text-gray-500 text-sm mb-4 line-clamp-2 leading-relaxed flex-1">
+                                        {product.description || 'Premium quality event supplies for your special occasions.'}
+                                    </p>
+
+                                    <div className="mt-auto space-y-4">
+                                        <div className="flex items-end justify-between">
+                                            <div>
+                                                <p className="text-xs text-gray-400 font-bold line-through mb-0.5">₹{originalPrice.toLocaleString('en-IN')}</p>
+                                                <div className="flex items-baseline gap-2">
+                                                    <span className="text-2xl font-black text-gray-900">₹{product.price.toLocaleString('en-IN')}</span>
+                                                    <span className="text-xs font-bold text-red-500 mb-1">Save ₹{savings.toLocaleString('en-IN')}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    alert('View details functionality to be implemented');
+                                                }}
+                                                className="flex-1 px-4 py-2.5 rounded-xl font-bold text-gray-600 hover:bg-gray-100 transition-colors border border-gray-200 text-sm flex items-center justify-center gap-1"
+                                            >
+                                                Details <ChevronRight size={16} />
+                                            </button>
+                                            <button
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    addToCart(product.id);
+                                                }}
+                                                className="flex-1 bg-[#FFD700] text-[#004D2C] px-4 py-2.5 rounded-xl font-black hover:bg-[#F0C000] transition-colors shadow-sm flex items-center justify-center gap-2 text-sm relative overflow-hidden"
+                                            >
+                                                <ShoppingCart size={16} />
+                                                <span>Add</span>
+                                                {cart[product.id] && (
+                                                    <span className="absolute top-1 right-1 bg-[#004D2C] text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                                                        {cart[product.id]}
+                                                    </span>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    ))}
+                        )
+                    })}
                 </div>
             </div>
 

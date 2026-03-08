@@ -9,13 +9,13 @@ const PRIME_CONFIG = {
     discountPrice: 2000,
     gstRate: 0.18,
     distribution: {
-        referralIncome: 500,
-        shoppingCashback: 100,
-        eventCommission: 140,
-        awardsRewards: 300,
-        platformCharges: 100,
-        companyProfit: 500,
-        gst: 360
+        referralIncome: 500, // 25%
+        shoppingCashback: 100, // 5%
+        eventCommission: 140, // 7%
+        awardsRewards: 300, // 15%
+        platformCharges: 100, // 5%
+        companyProfit: 500, // 25%
+        gst: 360 // 18%
     }
 };
 
@@ -136,6 +136,17 @@ export async function POST(request: NextRequest) {
             }));
         }
 
+        // Save mapping for the new primeCode
+        await docClient.send(new PutCommand({
+            TableName: 'ai-d-mart-data',
+            Item: {
+                PK: `CODE#${primeCode}`,
+                SK: 'MAPPING',
+                userId,
+                type: 'PRIME'
+            }
+        }));
+
         // Process referral if referral code provided
         if (referralCode) {
             await processReferralReward(referralCode, userId, membershipId);
@@ -252,22 +263,26 @@ export async function GET(request: NextRequest) {
 
 async function processReferralReward(referralCode: string, newUserId: string, membershipId: string) {
     try {
-        // Find the referrer by referral code
-        const referrerQuery = await docClient.send(new QueryCommand({
-            TableName: 'ai-d-mart-prime-memberships',
-            IndexName: 'GSI1',
-            KeyConditionExpression: 'GSI1PK = :pk',
-            FilterExpression: 'primeCode = :code',
-            ExpressionAttributeValues: {
-                ':pk': 'PRIME#ACTIVE',
-                ':code': referralCode
-            }
+        // Find the referrer by mapping
+        const mapRes = await docClient.send(new GetCommand({
+            TableName: 'ai-d-mart-data',
+            Key: { PK: `CODE#${referralCode}`, SK: 'MAPPING' }
         }));
 
-        if (referrerQuery.Items && referrerQuery.Items.length > 0) {
-            const referrer = referrerQuery.Items[0];
-            const referrerId = referrer.userId;
+        if (mapRes.Item && mapRes.Item.userId) {
+            const referrerId = mapRes.Item.userId;
             const timestamp = new Date().toISOString();
+
+            // Check if referrer is a Prime member
+            const primeCheck = await docClient.send(new GetCommand({
+                TableName: 'ai-d-mart-prime-memberships',
+                Key: { PK: `USER#${referrerId}`, SK: 'MEMBERSHIP' }
+            }));
+
+            if (!primeCheck.Item || primeCheck.Item.status !== 'ACTIVE') {
+                console.log(`Referrer ${referrerId} is not a prime member. No ₹500 commission awarded.`);
+                return;
+            }
 
             // Create referral record
             const referralRecord = {
@@ -311,7 +326,7 @@ async function processReferralReward(referralCode: string, newUserId: string, me
 async function logPaymentDistribution(membershipId: string, userId: string, amount: number) {
     try {
         const timestamp = new Date().toISOString();
-        
+
         const distributionLog = {
             PK: `MEMBERSHIP#${membershipId}`,
             SK: 'DISTRIBUTION',

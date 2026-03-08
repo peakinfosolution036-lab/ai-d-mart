@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { notifications } from '@/lib/dynamodb';
 
+export async function GET(req: NextRequest) {
+    try {
+        const { searchParams } = new URL(req.url);
+        const userId = searchParams.get('userId');
+
+        if (!userId) {
+            return NextResponse.json({ success: false, error: 'User ID is required' }, { status: 400 });
+        }
+
+        const userNotifs = await notifications.getByUser(userId);
+        return NextResponse.json({ success: true, data: userNotifs });
+    } catch (error: any) {
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+    }
+}
+
 export async function PATCH(req: NextRequest) {
     try {
         const { searchParams } = new URL(req.url);

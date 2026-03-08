@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { signUp, adminAddUserToGroup } from '@/lib/cognito';
-import { putUserProfile, generateUserId, type UserProfile } from '@/lib/dynamodb';
+import { putUserProfile, generateUserId, notifications, type UserProfile } from '@/lib/dynamodb';
 import { ApiResponse } from '@/types';
 import { REGISTRATION_FEE } from '@/constants';
+import { sendWelcomeEmail } from '@/lib/email-resend';
+import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { docClient } from '@/lib/dynamodb';
 
 export async function POST(request: NextRequest) {
     try {
@@ -50,6 +53,7 @@ export async function POST(request: NextRequest) {
         // This avoids the "username cannot be email format" error when the user
         // pool is configured with email as an alias.
         const userId = generateUserId('CUSTOMER');
+        const referralCode = `REF-ADM-${Math.floor(1000 + Math.random() * 9000)}`;
 
         // Sign up with Cognito
         const signUpResult = await signUp(
@@ -92,6 +96,7 @@ export async function POST(request: NextRequest) {
             ifscCode: body.ifscCode,
             branchName: body.branchName,
             referredBy: inviteCode,
+            referralCode,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
         };
@@ -112,6 +117,64 @@ export async function POST(request: NextRequest) {
 
         // Add user to customers group
         await adminAddUserToGroup(email, 'customers');
+
+        // Save referral code mapping
+        await docClient.send(new PutCommand({
+            TableName: 'ai-d-mart-data',
+            Item: {
+                PK: `CODE#${referralCode}`,
+                SK: 'MAPPING',
+                userId,
+                type: 'REFERRAL'
+            }
+        }));
+
+        // Trigger referral creation if they used an invite code
+        if (inviteCode) {
+            try {
+                const mapRes = await docClient.send(new GetCommand({
+                    TableName: 'ai-d-mart-data',
+                    Key: { PK: `CODE#${inviteCode}`, SK: 'MAPPING' }
+                }));
+
+                if (mapRes.Item && mapRes.Item.userId) {
+                    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+                    fetch(`${baseUrl}/api/referrals`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'create_referral',
+                            userId: mapRes.Item.userId,
+                            referralCode: inviteCode,
+                            newUserId: userId
+                        })
+                    }).catch(err => console.error('Failed to call referral API', err));
+                }
+            } catch (e) {
+                console.error('Failed to process invite code mapping', e);
+            }
+        }
+
+        // Send Welcome Notification Email
+        try {
+            await sendWelcomeEmail({ name: fullName, email });
+            console.log('[Register] Welcome email dispatched to:', email);
+        } catch (emailError) {
+            console.error('[Register] Failed to send welcome email:', emailError);
+            // Non-blocking error, user is still registered successfully.
+        }
+
+        // Add welcome notification
+        const welcomeNotifId = `notif_${Date.now()}_${userId}`;
+        await notifications.create(welcomeNotifId, {
+            id: welcomeNotifId,
+            userId,
+            title: 'Welcome to AI D-Mart!',
+            message: `Your account has been created. A registration bonus of ₹${REGISTRATION_FEE.breakdown.regFee} has been added to your wallet.`,
+            type: 'system',
+            isRead: false,
+            createdAt: new Date().toISOString()
+        });
 
         return NextResponse.json<ApiResponse>({
             success: true,

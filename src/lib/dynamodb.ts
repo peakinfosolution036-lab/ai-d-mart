@@ -66,6 +66,9 @@ export interface UserProfile {
     profileImage?: string;
     selfieImage?: string;
     location?: { lat: number; lng: number };
+    referralCode?: string;
+    primeCode?: string;
+    isPrimeMember?: boolean;
     utrNumber?: string;
     paymentScreenshot?: string;
     bankAccountNumber?: string;

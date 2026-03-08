@@ -1,14 +1,14 @@
 import type { Metadata } from 'next'
-import { Plus_Jakarta_Sans } from 'next/font/google'
+import { Poppins } from 'next/font/google'
 import './globals.css'
 import { DataProvider } from '@/context/DataContext'
 import { AuthProvider } from '@/context/AuthContext'
 import { AppLayout } from '@/components/AppLayout'
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const poppins = Poppins({
     subsets: ['latin'],
     weight: ['300', '400', '500', '600', '700', '800'],
-    variable: '--font-plus-jakarta',
+    variable: '--font-poppins',
 })
 
 export const metadata: Metadata = {
@@ -35,7 +35,7 @@ export default function RootLayout({
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
                 <script src="https://checkout.razorpay.com/v1/checkout.js" async></script>
             </head>
-            <body className={plusJakartaSans.className}>
+            <body className={poppins.className}>
                 <AuthProvider>
                     <DataProvider>
                         <AppLayout>

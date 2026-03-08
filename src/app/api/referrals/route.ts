@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
         // Admin: Get aggregate stats
         if (type === 'stats') {
             const scan = await docClient.send(new ScanCommand({
-                TableName: 'referrals',
+                TableName: 'ai-d-mart-referrals',
                 Limit: 1000,
             }));
             const referrals = scan.Items || [];
@@ -61,7 +61,7 @@ export async function GET(request: NextRequest) {
         // Admin: Get all referrals list
         if (type === 'admin_list') {
             const scan = await docClient.send(new ScanCommand({
-                TableName: 'referrals',
+                TableName: 'ai-d-mart-referrals',
                 Limit: 500,
             }));
             return NextResponse.json({
@@ -77,13 +77,13 @@ export async function GET(request: NextRequest) {
 
         // Get user points
         const pointsResult = await docClient.send(new GetCommand({
-            TableName: 'user-points',
+            TableName: 'ai-d-mart-user-points',
             Key: { userId }
         }));
 
         // Get user referrals
         const referralsResult = await docClient.send(new QueryCommand({
-            TableName: 'referrals',
+            TableName: 'ai-d-mart-referrals',
             IndexName: 'referrer-index',
             KeyConditionExpression: 'referrerId = :referrerId',
             ExpressionAttributeValues: { ':referrerId': userId }
@@ -91,7 +91,7 @@ export async function GET(request: NextRequest) {
 
         // Get point transactions
         const transactionsResult = await docClient.send(new QueryCommand({
-            TableName: 'point-transactions',
+            TableName: 'ai-d-mart-point-transactions',
             IndexName: 'user-transactions-index',
             KeyConditionExpression: 'userId = :userId',
             ExpressionAttributeValues: { ':userId': userId }
@@ -182,7 +182,7 @@ export async function POST(request: NextRequest) {
             }
 
             await docClient.send(new PutCommand({
-                TableName: 'referrals',
+                TableName: 'ai-d-mart-referrals',
                 Item: referral
             }));
 
@@ -200,7 +200,7 @@ export async function POST(request: NextRequest) {
 
             // Update referral status
             await docClient.send(new UpdateCommand({
-                TableName: 'referrals',
+                TableName: 'ai-d-mart-referrals',
                 Key: { id: referralId },
                 UpdateExpression: 'SET #status = :status, pointsEarned = :points, approvedAt = :approvedAt',
                 ExpressionAttributeNames: { '#status': 'status' },
@@ -213,7 +213,7 @@ export async function POST(request: NextRequest) {
 
             // Get referral to find referrer
             const referralResult = await docClient.send(new GetCommand({
-                TableName: 'referrals',
+                TableName: 'ai-d-mart-referrals',
                 Key: { id: referralId }
             }));
             const referral = referralResult.Item;
@@ -228,7 +228,7 @@ export async function POST(request: NextRequest) {
         if (action === 'reject_referral') {
             const { referralId } = body;
             await docClient.send(new UpdateCommand({
-                TableName: 'referrals',
+                TableName: 'ai-d-mart-referrals',
                 Key: { id: referralId },
                 UpdateExpression: 'SET #status = :status, rejectedAt = :rejectedAt',
                 ExpressionAttributeNames: { '#status': 'status' },
@@ -256,7 +256,7 @@ async function awardPointsAndCredit(
 
     // 1. Update user points
     await docClient.send(new UpdateCommand({
-        TableName: 'user-points',
+        TableName: 'ai-d-mart-user-points',
         Key: { userId: referrerId },
         UpdateExpression: 'ADD totalPoints :points, availablePoints :points',
         ExpressionAttributeValues: { ':points': points }
@@ -264,7 +264,7 @@ async function awardPointsAndCredit(
 
     // 2. Create point transaction record
     await docClient.send(new PutCommand({
-        TableName: 'point-transactions',
+        TableName: 'ai-d-mart-point-transactions',
         Item: {
             id: uuidv4(),
             userId: referrerId,

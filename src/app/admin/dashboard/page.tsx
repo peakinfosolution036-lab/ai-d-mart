@@ -21,6 +21,8 @@ import { Dropdown } from '@/components/ui/Dropdown';
 import { Toast, ToastType } from '@/components/ui/Toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import { exportReportsAnalytics } from '@/lib/exportUtils';
+import NotificationDropdown from '@/components/NotificationDropdown';
+import AdminFinancialReports from '@/components/AdminFinancialReports';
 
 const adminMenuItems = [
     { id: 'overview', label: 'Dashboard', icon: LayoutDashboard, category: 'Main' },
@@ -30,6 +32,7 @@ const adminMenuItems = [
     { id: 'exclusive-events', label: 'Exclusive Events', icon: Star, category: 'Management' },
     { id: 'jobs', label: 'Job Portal', icon: Briefcase, category: 'Management' },
     { id: 'lucky-draw', label: 'Lucky Draw', icon: Star, category: 'Management' },
+    { id: 'withdrawals', label: 'Withdrawal Requests', icon: Wallet, category: 'Management' },
     { id: 'referrals', label: 'Referrals', icon: Share2, category: 'Marketing' },
     { id: 'offers', label: 'Offers', icon: Tag, category: 'Marketing' },
     { id: 'promotions', label: 'Promotions', icon: Megaphone, category: 'Marketing' },
@@ -145,6 +148,9 @@ export default function AdminDashboard() {
     const [jobApplications, setJobApplications] = useState<any[]>([]);
     const [showJobApplicationsModal, setShowJobApplicationsModal] = useState(false);
     const [selectedJobForApplications, setSelectedJobForApplications] = useState<any>(null);
+
+    // Withdrawals state
+    const [withdrawals, setWithdrawals] = useState<any[]>([]);
 
     // Offers state
     const [offers, setOffers] = useState<Offer[]>([]);
@@ -528,6 +534,41 @@ export default function AdminDashboard() {
         } finally {
             setActionLoading(false);
             setDeleteConfirm(null);
+        }
+    };
+
+    const fetchWithdrawals = useCallback(async () => {
+        try {
+            const res = await fetch('/api/admin/withdrawals');
+            const data = await res.json();
+            if (data.success) {
+                setWithdrawals(data.data.sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()));
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }, []);
+
+    const updateWithdrawalStatus = async (requestSk: string, status: string) => {
+        setActionLoading(true);
+        try {
+            const res = await fetch('/api/admin/withdrawals', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ requestSk, status })
+            });
+            const data = await res.json();
+            if (data.success) {
+                showToast(`Withdrawal marked as ${status}`, 'success');
+                fetchWithdrawals();
+            } else {
+                showToast(data.error || 'Failed to update withdrawal', 'error');
+            }
+        } catch (e) {
+            console.error('Failed to update withdrawal', e);
+            showToast('Failed to update withdrawal', 'error');
+        } finally {
+            setActionLoading(false);
         }
     };
 
@@ -1339,6 +1380,7 @@ export default function AdminDashboard() {
             case 'events': fetchEvents(); break;
             case 'stores': fetchStores(); fetchProducts(); break;
             case 'jobs': fetchJobs(); fetchJobStats(); break;
+            case 'withdrawals': fetchWithdrawals(); break;
             case 'offers': fetchOffers(); fetchEvents(); break;
             case 'promotions': fetchPromotions(); fetchAllCampaigns(); break;
             case 'notifications': fetchNotifications(); break;
@@ -1348,7 +1390,7 @@ export default function AdminDashboard() {
         }
     }, [activeTab, isLoggedIn, isLoading, statusFilter,
         fetchCustomers, fetchEvents, fetchStores, fetchProducts, fetchJobs,
-        fetchJobStats, fetchOffers, fetchPromotions,
+        fetchJobStats, fetchWithdrawals, fetchOffers, fetchPromotions,
         fetchNotifications, fetchBusinesses, fetchTransactions,
         fetchAllCampaigns, fetchPlatformSettings, fetchPlatformStats
     ]);
@@ -1469,7 +1511,7 @@ export default function AdminDashboard() {
                     { label: 'Pending', value: stats.pendingUsers, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50', change: '+2' },
                     { label: 'Suspended', value: stats.suspendedUsers, icon: UserX, color: 'text-red-600', bg: 'bg-red-50', change: '-1' },
                 ].map((stat) => (
-                    <div key={stat.label} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-xl shadow-slate-200/50 hover:-translate-y-1 transition-transform duration-300">
+                    <div key={stat.label} className="bg-white rounded-3xl p-6 border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300">
                         <div className="flex items-start justify-between mb-4">
                             <div className={`w-14 h-14 ${stat.bg} rounded-2xl flex items-center justify-center ${stat.color}`}>
                                 <stat.icon size={26} />
@@ -1484,6 +1526,49 @@ export default function AdminDashboard() {
                         </div>
                     </div>
                 ))}
+            </div>
+
+            {/* Recent Activity Section */}
+            <div>
+                <h3 className="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <Activity className="text-blue-600" /> Recent User Registrations
+                </h3>
+                <div className="bg-white rounded-[2rem] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] overflow-hidden">
+                    <div className="divide-y divide-slate-50">
+                        {customers && customers.length > 0 ? (
+                            customers.slice(0, 5).map((customer: any) => (
+                                <div key={customer.id} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-slate-50 transition-colors">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center shrink-0">
+                                            <User size={24} />
+                                        </div>
+                                        <div>
+                                            <p className="font-bold text-slate-900 text-lg">{customer.name || 'Unknown User'}</p>
+                                            <p className="text-sm text-slate-500">{customer.email}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-4 justify-between md:justify-end w-full md:w-auto">
+                                        <div className="text-left md:text-right">
+                                            <p className="text-sm font-medium text-slate-600 hidden md:block">Joined On</p>
+                                            <p className="text-sm text-slate-500">{new Date(customer.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${customer.status === 'ACTIVE' ? 'bg-green-100 text-green-700' :
+                                            customer.status === 'PENDING' ? 'bg-amber-100 text-amber-700' :
+                                                'bg-red-100 text-red-700'
+                                            }`}>
+                                            {customer.status}
+                                        </span>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="p-12 text-center">
+                                <Activity className="mx-auto text-slate-300 mb-3" size={32} />
+                                <p className="text-slate-500 font-medium">No recent registrations found.</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
@@ -1942,6 +2027,8 @@ export default function AdminDashboard() {
                     ))}
                 </div>
             </div>
+
+            <AdminFinancialReports />
         </div>
     );
 
@@ -3253,6 +3340,93 @@ export default function AdminDashboard() {
         </div>
     );
 
+    const renderWithdrawals = () => (
+        <div className="space-y-6 animate-in fade-in duration-300">
+            <div className="flex justify-between items-center bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                <div>
+                    <h3 className="text-2xl font-black text-slate-900">Withdrawal Requests</h3>
+                    <p className="text-slate-500 text-sm">Review user withdrawal requests and process payouts</p>
+                </div>
+            </div>
+
+            <div className="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+                {withdrawals.length === 0 ? (
+                    <div className="text-center py-20 text-slate-500">No withdrawal requests found.</div>
+                ) : (
+                    <div className="overflow-x-auto custom-scrollbar">
+                        <table className="w-full min-w-[800px]">
+                            <thead className="border-b border-slate-50">
+                                <tr>
+                                    <th className="text-left px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Date</th>
+                                    <th className="text-left px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">User ID</th>
+                                    <th className="text-left px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Amount</th>
+                                    <th className="text-left px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Payout Details</th>
+                                    <th className="text-left px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Status</th>
+                                    <th className="text-right px-6 py-4 text-xs font-black text-slate-400 uppercase tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50">
+                                {withdrawals.map((w: any) => (
+                                    <tr key={w.SK} className="hover:bg-slate-50 transition-colors">
+                                        <td className="px-6 py-6 text-sm text-slate-600 font-medium">
+                                            {new Date(w.createdAt).toLocaleDateString()} {new Date(w.createdAt).toLocaleTimeString()}
+                                        </td>
+                                        <td className="px-6 py-6 text-sm font-mono text-slate-500">
+                                            {w.userId}
+                                        </td>
+                                        <td className="px-6 py-6 text-sm font-bold text-slate-900">
+                                            ₹{w.amount}
+                                        </td>
+                                        <td className="px-6 py-6 text-sm text-slate-700">
+                                            {w.payoutDetails}
+                                        </td>
+                                        <td className="px-6 py-6">
+                                            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${w.status === 'PAID' ? 'bg-green-100 text-green-700' :
+                                                w.status === 'REJECTED' ? 'bg-red-100 text-red-700' :
+                                                    w.status === 'APPROVED' ? 'bg-blue-100 text-blue-700' :
+                                                        'bg-amber-100 text-amber-700'
+                                                }`}>
+                                                {w.status}
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-6 text-right">
+                                            <div className="flex justify-end gap-2">
+                                                {w.status === 'PENDING' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => updateWithdrawalStatus(w.SK, 'APPROVED')}
+                                                            className="px-3 py-1.5 bg-blue-50 text-blue-600 rounded-xl font-bold text-xs hover:bg-blue-600 hover:text-white transition-all"
+                                                        >
+                                                            Approve
+                                                        </button>
+                                                        <button
+                                                            onClick={() => updateWithdrawalStatus(w.SK, 'REJECTED')}
+                                                            className="px-3 py-1.5 bg-red-50 text-red-600 rounded-xl font-bold text-xs hover:bg-red-600 hover:text-white transition-all"
+                                                        >
+                                                            Reject
+                                                        </button>
+                                                    </>
+                                                )}
+                                                {w.status === 'APPROVED' && (
+                                                    <button
+                                                        onClick={() => updateWithdrawalStatus(w.SK, 'PAID')}
+                                                        className="px-3 py-1.5 bg-green-50 text-green-600 rounded-xl font-bold text-xs hover:bg-green-600 hover:text-white transition-all"
+                                                    >
+                                                        Mark Paid
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+
     const renderContent = () => {
         switch (activeTab) {
             case 'overview': return renderOverview();
@@ -3263,6 +3437,7 @@ export default function AdminDashboard() {
                 router.push('/admin/dashboard/Exclusive-Events');
                 return <div className="text-center py-20 text-slate-500">Redirecting...</div>;
             case 'jobs': return renderJobs();
+            case 'withdrawals': return renderWithdrawals();
             case 'lucky-draw': return renderLuckyDraw();
             case 'referrals':
                 router.push('/admin/referrals');
@@ -3357,15 +3532,7 @@ export default function AdminDashboard() {
                             </h1>
                         </div>
                         <div className="flex items-center gap-4">
-                            <button
-                                onClick={() => setActiveTab('notifications')}
-                                className="p-2 hover:bg-slate-100 rounded-xl relative text-slate-600 transition-colors"
-                            >
-                                <Bell size={20} />
-                                {stats.pendingUsers > 0 && (
-                                    <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
-                                )}
-                            </button>
+                            <NotificationDropdown />
                         </div>
                     </div>
                 </header>
