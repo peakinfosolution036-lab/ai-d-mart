@@ -21,6 +21,7 @@ interface Job {
     source: 'internal' | 'external';
     status: 'published' | 'pending' | 'draft' | 'closed';
     applicationsCount: number;
+    image?: string;
     createdAt: string;
     updatedAt: string;
 }
@@ -107,7 +108,8 @@ export default function AdminJobsPage() {
             source: 'internal',
             status: 'published',
             description: '',
-            shortDescription: ''
+            shortDescription: '',
+            image: ''
         });
         setShowModal(true);
     };
@@ -226,12 +228,12 @@ export default function AdminJobsPage() {
                                             </td>
                                             <td className="px-6 py-5">
                                                 <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${job.status === 'published' ? 'bg-emerald-100 text-emerald-700' :
-                                                        job.status === 'draft' ? 'bg-gray-100 text-gray-600' :
-                                                            'bg-yellow-100 text-yellow-700'
+                                                    job.status === 'draft' ? 'bg-gray-100 text-gray-600' :
+                                                        'bg-yellow-100 text-yellow-700'
                                                     }`}>
                                                     <div className={`w-1.5 h-1.5 rounded-full ${job.status === 'published' ? 'bg-emerald-500' :
-                                                            job.status === 'draft' ? 'bg-gray-400' :
-                                                                'bg-yellow-500'
+                                                        job.status === 'draft' ? 'bg-gray-400' :
+                                                            'bg-yellow-500'
                                                         }`} />
                                                     {job.status}
                                                 </span>
@@ -373,6 +375,16 @@ export default function AdminJobsPage() {
                                             <option value="closed">Closed</option>
                                         </select>
                                     </div>
+                                </div>
+
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-black text-gray-500 uppercase tracking-widest ml-1">Job Details Image URL (Optional)</label>
+                                    <input
+                                        value={editingJob.image || ''}
+                                        onChange={e => setEditingJob(j => ({ ...j, image: e.target.value }))}
+                                        className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium text-sm"
+                                        placeholder="https://example.com/image.jpg"
+                                    />
                                 </div>
 
                                 <div className="space-y-1.5">

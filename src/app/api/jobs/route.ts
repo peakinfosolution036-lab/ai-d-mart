@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         const {
             title, company, category, description, shortDescription,
             type, salary, salaryRange, location, requirements,
-            responsibilities, benefits, postedBy, source, status
+            responsibilities, benefits, postedBy, source, status, image
         } = body;
 
         if (!title || !company || !type || !postedBy) {
@@ -89,6 +89,7 @@ export async function POST(request: NextRequest) {
             postedBy: postedBy,
             source: source || 'internal', // internal | external
             status: status || 'pending', // published, pending, draft, closed
+            image: image || '',
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             applicationsCount: 0

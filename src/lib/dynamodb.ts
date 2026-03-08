@@ -679,7 +679,7 @@ export const reviews = {
 
 // Jobs
 export const jobs = {
-    create: (id: string, data: any) => putDataItem('job', id, { ...data, status: data.status || 'pending', applicationsCount: 0 }),
+    create: async (id: string, data: any) => putDataItem('job', id, { ...data, status: data.status || 'published', applicationsCount: 0, createdAt: new Date().toISOString() }),
     get: (id: string) => getDataItem('job', id),
     getAll: () => getDataItemsByType('job'),
     getByUser: async (userId: string) => {

@@ -166,50 +166,32 @@ export default function JobsListing() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredJobs.map(job => (
-                        <div key={job.id} className="group bg-white rounded-2xl border border-gray-200 hover:shadow-xl hover:border-[#00703C]/30 transition-all hover:-translate-y-1 flex flex-col h-full overflow-hidden">
-                            {/* Card Image Header */}
-                            <div className="h-32 w-full bg-gray-100 relative overflow-hidden flex-shrink-0">
+                        <div key={job.id}
+                            onClick={() => setSelectedJob(job)}
+                            className="group bg-[#221c18] rounded-[2rem] p-8 border border-white/5 hover:border-orange-500/30 transition-all hover:-translate-y-1 cursor-pointer flex flex-col h-full text-left shadow-2xl">
+
+                            <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-br from-[#ffaa33] to-[#ff7b00] flex items-center justify-center mb-6 shadow-lg shadow-orange-500/20 flex-shrink-0 overflow-hidden">
                                 {job.image ? (
-                                    <img src={job.image} alt={job.company} className="w-full h-full object-cover" />
+                                    <img src={job.image} alt={job.title} className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full bg-gradient-to-br from-[#00703C]/20 to-[#00703C]/10 flex items-center justify-center">
-                                        <Building2 size={40} className="text-[#00703C]/30" />
-                                    </div>
+                                    <Search className="text-white" size={28} />
                                 )}
-                                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-[#00703C] shadow-sm">
+                            </div>
+
+                            <div className="flex items-start justify-between gap-4 mb-4">
+                                <h3 className="text-2xl font-bold text-white group-hover:text-orange-400 transition-colors leading-tight mb-1">{job.title}</h3>
+                                <ChevronRight className="text-gray-500 group-hover:text-orange-400 transition-colors flex-shrink-0 mt-1" size={24} />
+                            </div>
+
+                            <div className="mb-6">
+                                <span className="inline-flex px-4 py-1.5 rounded-full bg-gradient-to-r from-[#ffaa33] to-[#ff7b00] text-sm font-bold text-white shadow-md">
                                     {job.type}
-                                </div>
+                                </span>
                             </div>
 
-                            <div className="p-6 flex flex-col flex-1">
-                                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#00703C] transition-colors mb-1">{job.title}</h3>
-                                <p className="text-sm font-medium text-gray-500 mb-6">{job.company}</p>
-
-                                <div className="space-y-3 mb-8 flex-1">
-                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                        <span className="text-lg">📍</span>
-                                        <span className="font-medium">{job.location}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                        <span className="text-lg">💼</span>
-                                        <span className="font-medium">{job.type}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                        <span className="text-lg">💰</span>
-                                        <span className="font-medium">{job.salaryRange}</span>
-                                    </div>
-                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                        <span className="text-lg">📅</span>
-                                        <span className="font-medium">{job.experience || 'Not specified'}</span>
-                                    </div>
-                                </div>
-                                <button
-                                    onClick={() => setApplyingJob(job)}
-                                    className="w-full py-3 bg-[#00703C] text-white rounded-xl font-bold hover:bg-[#005c30] transition-colors shadow-md"
-                                >
-                                    Apply Now
-                                </button>
-                            </div>
+                            <p className="text-[#a09a96] text-[15px] leading-relaxed line-clamp-3 mt-auto">
+                                {job.shortDescription || job.description || 'Optimise website rankings, drive organic traffic, and build keyword strategies that connect rural India to digital services.'}
+                            </p>
                         </div>
                     ))}
                 </div>
