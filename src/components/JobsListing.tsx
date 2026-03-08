@@ -22,6 +22,7 @@ interface Job {
     benefits?: string[];
     requirements?: string[];
     experience?: string;
+    image?: string;
     createdAt: string;
 }
 
@@ -165,35 +166,50 @@ export default function JobsListing() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredJobs.map(job => (
-                        <div key={job.id} className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-xl hover:border-[#00703C]/30 transition-all hover:-translate-y-1 flex flex-col h-full">
-                            <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#00703C] transition-colors mb-1">{job.title}</h3>
-                            <p className="text-sm font-medium text-gray-500 mb-6">{job.company}</p>
-
-                            <div className="space-y-3 mb-8 flex-1">
-                                <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                    <span className="text-lg">📍</span>
-                                    <span className="font-medium">{job.location}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                    <span className="text-lg">💼</span>
-                                    <span className="font-medium">{job.type}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                    <span className="text-lg">💰</span>
-                                    <span className="font-medium">{job.salaryRange}</span>
-                                </div>
-                                <div className="flex items-center gap-3 text-gray-700 text-sm">
-                                    <span className="text-lg">📅</span>
-                                    <span className="font-medium">{job.experience || 'Not specified'}</span>
+                        <div key={job.id} className="group bg-white rounded-2xl border border-gray-200 hover:shadow-xl hover:border-[#00703C]/30 transition-all hover:-translate-y-1 flex flex-col h-full overflow-hidden">
+                            {/* Card Image Header */}
+                            <div className="h-32 w-full bg-gray-100 relative overflow-hidden flex-shrink-0">
+                                {job.image ? (
+                                    <img src={job.image} alt={job.company} className="w-full h-full object-cover" />
+                                ) : (
+                                    <div className="w-full h-full bg-gradient-to-br from-[#00703C]/20 to-[#00703C]/10 flex items-center justify-center">
+                                        <Building2 size={40} className="text-[#00703C]/30" />
+                                    </div>
+                                )}
+                                <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest text-[#00703C] shadow-sm">
+                                    {job.type}
                                 </div>
                             </div>
 
-                            <button
-                                onClick={() => setApplyingJob(job)}
-                                className="w-full py-3 bg-[#00703C] text-white rounded-xl font-bold hover:bg-[#005c30] transition-colors shadow-md"
-                            >
-                                Apply Now
-                            </button>
+                            <div className="p-6 flex flex-col flex-1">
+                                <h3 className="text-xl font-bold text-gray-900 group-hover:text-[#00703C] transition-colors mb-1">{job.title}</h3>
+                                <p className="text-sm font-medium text-gray-500 mb-6">{job.company}</p>
+
+                                <div className="space-y-3 mb-8 flex-1">
+                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                        <span className="text-lg">📍</span>
+                                        <span className="font-medium">{job.location}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                        <span className="text-lg">💼</span>
+                                        <span className="font-medium">{job.type}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                        <span className="text-lg">💰</span>
+                                        <span className="font-medium">{job.salaryRange}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-gray-700 text-sm">
+                                        <span className="text-lg">📅</span>
+                                        <span className="font-medium">{job.experience || 'Not specified'}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => setApplyingJob(job)}
+                                    className="w-full py-3 bg-[#00703C] text-white rounded-xl font-bold hover:bg-[#005c30] transition-colors shadow-md"
+                                >
+                                    Apply Now
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
