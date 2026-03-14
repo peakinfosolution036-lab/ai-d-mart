@@ -1070,6 +1070,37 @@ export function generateUserId(role: 'ADMIN' | 'CUSTOMER'): string {
     return `${prefix}${num}`;
 }
 
+// Generate Sequential User ID (e.g. DE0001, DE0002)
+export async function generateSequentialUserId(role: 'ADMIN' | 'CUSTOMER' = 'CUSTOMER'): Promise<string> {
+    const prefix = role === 'ADMIN' ? 'ADM' : 'DE';
+    const counterKey = `COUNTER#USER#${prefix}`;
+    
+    try {
+        const command = new UpdateCommand({
+            TableName: getDataTable(),
+            Key: {
+                PK: counterKey,
+                SK: 'METADATA'
+            },
+            UpdateExpression: 'ADD currentCount :inc',
+            ExpressionAttributeValues: {
+                ':inc': 1
+            },
+            ReturnValues: 'UPDATED_NEW'
+        });
+        
+        const response = await docClient.send(command);
+        const nextId = response.Attributes?.currentCount || 1;
+        
+        // Pad with leading zeros to 4 digits (e.g. 1 -> 0001)
+        const paddedId = nextId.toString().padStart(4, '0');
+        return `${prefix}${paddedId}`;
+    } catch (error) {
+        console.error('Failed to generate sequential user ID, falling back to random:', error);
+        return generateUserId(role);
+    }
+}
+
 // ==================== AD CAMPAIGNS ====================
 export const campaigns = {
     create: (id: string, data: any) => putDataItem('campaign', id, { ...data, status: 'pending', impressions: 0, clicks: 0, spent: 0, createdAt: new Date().toISOString() }),

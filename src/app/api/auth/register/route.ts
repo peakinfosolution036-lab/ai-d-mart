@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { signUp, adminAddUserToGroup } from '@/lib/cognito';
-import { putUserProfile, generateUserId, notifications, type UserProfile } from '@/lib/dynamodb';
+import { putUserProfile, generateSequentialUserId, notifications, type UserProfile } from '@/lib/dynamodb';
 import { ApiResponse } from '@/types';
 import { REGISTRATION_FEE } from '@/constants';
 import { sendWelcomeEmail } from '@/lib/email-resend';
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
         // Generate user ID first so it can be used as the Cognito username.
         // This avoids the "username cannot be email format" error when the user
         // pool is configured with email as an alias.
-        const userId = generateUserId('CUSTOMER');
+        const userId = await generateSequentialUserId('CUSTOMER');
         const referralCode = `REF-ADM-${Math.floor(1000 + Math.random() * 9000)}`;
 
         // Sign up with Cognito
